@@ -27,8 +27,8 @@
 	antag_flag = BE_CULTIST
 	restricted_jobs = list("Chaplain","AI", "Cyborg", "Security Officer", "Warden", "Detective", "Head of Security", "Captain")
 	protected_jobs = list()
-	required_players = 15
-	required_enemies = 3
+	required_players = 1
+	required_enemies = 0
 	recommended_enemies = 4
 
 	uplink_welcome = "Nar-Sie Uplink Console:"
@@ -55,7 +55,7 @@
 
 
 /datum/game_mode/cult/pre_setup()
-	if(required_players >= 20 && prob(40))
+	if(required_players >= 2 && prob(40))
 		objectives += "eldergod"
 		objectives += "sacrifice"
 	else
