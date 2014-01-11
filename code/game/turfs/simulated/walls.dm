@@ -16,7 +16,7 @@
 /turf/simulated/wall/proc/dismantle_wall(devastated=0, explode=0)
 	if(istype(src,/turf/simulated/wall/r_wall))
 		if(!devastated)
-			playsound(src, 'sound/items/Welder.ogg', 100, 1)
+			if(!explode)playsound(src, 'sound/items/Welder.ogg', 100, 1)
 			new /obj/structure/girder/reinforced(src)
 			new /obj/item/stack/sheet/plasteel( src )
 		else
@@ -34,7 +34,7 @@
 
 	else
 		if(!devastated)
-			playsound(src, 'sound/items/Welder.ogg', 100, 1)
+			if(!explode)playsound(src, 'sound/items/Welder.ogg', 100, 1)
 			new /obj/structure/girder(src)
 			if (mineral == "metal")
 				new /obj/item/stack/sheet/metal( src )

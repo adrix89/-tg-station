@@ -28,6 +28,157 @@
 		user << "\red An overwhelming feeling of dread comes over you as you pick up the cultist's sword. It would be wise to be rid of this blade quickly."
 		user.make_dizzy(120)
 
+/obj/item/weapon/melee/ironslayer
+	name = "iron katana"
+	desc = "Doesn't look that powerfull at first, but goes throght metal like butter."
+	icon_state = "katana"
+	item_state = "katana"
+	flags = CONDUCT | USEDELAY
+	slot_flags = SLOT_BELT | SLOT_BACK
+	force = 10
+	throwforce = 10
+	w_class = 4
+	hitsound = 'sound/weapons/bladeslice.ogg'
+	attack_verb = list("slashed", "sliced", "torn", "ripped", "diced", "cut")
+	
+/obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, proximity_flag, click_parameters)
+	if(proximity_flag)
+		var/capture = 0
+		if(istype(target,/obj/mecha))
+			var/obj/mecha/mech = target
+			mech.take_damage(120)	//mech slayer
+			capture = 1
+		else if(isrobot(target))
+			var/mob/living/silicon/S = target
+			S.gib()		//robot slayer
+			capture = 1
+		else if(istype(target,/obj/machinery/bot))
+			var/obj/machinery/bot/B = target
+			B.explode()		//bot slayer
+			capture = 1
+			
+		else if(istype(target, /turf/simulated/wall/r_wall))
+			if(prob(15))
+				var/turf/simulated/wall/W = target
+				W.dismantle_wall(0,1)
+				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
+			capture = 1
+		else if(istype(target, /turf/simulated/wall))
+			if(prob(30))
+				var/turf/simulated/wall/W = target
+				W.dismantle_wall(0,1)
+				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
+			capture = 1
+			
+		else if(istype(target,/obj/machinery/door/airlock))
+			var/obj/machinery/door/airlock/D = target
+			if(!D.glass && !(D.doortype in list(9,26,28,29,30,33)) && prob(25))		//only destroy metal doors,and no vault/AI
+				del target
+				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
+				capture = 1
+		else if(target.type in typesof(/obj/machinery/door/poddoor/shutters,/obj/machinery/portable_atmospherics/canister,/obj/structure/rack,/obj/structure/table,/obj/structure/girder,/obj/structure/grille,/obj/structure/closet))
+			target.ex_act(2)
+			capture = 1
+			
+		if(capture)
+			var/showname
+			if(user)
+				showname = " by [user]"
+			if(attack_verb.len)
+				user.visible_message("\red <B>[target] has been [pick(attack_verb)] with [src][showname]. </B>")
+			else
+				user.visible_message("\red <B>[target] has been attacked with [src][showname]. </B>")
+			playsound(loc, 'sound/weapons/bladeslice.ogg', 50, 1, -1)
+			return 1
+		else
+			return 0
+	return 0
+	
+		
+/obj/item/weapon/melee/cultblade/vorpal
+	name = "Vorpal blade"
+	desc = "A wicked curved blade of alien origin, you feel like it can tear the fabric of reality."
+	icon = 'icons/obj/wizard.dmi'
+	icon_state = "render"
+	//item_state = "render"
+	item_state = "cultblade"
+	flags = CONDUCT
+	force = 40
+	throwforce = 10
+	w_class = 3
+	var/charges = 3
+	var/strikes = 0
+	
+/obj/item/weapon/melee/cultblade/vorpal/attack(mob/living/target as mob, mob/living/carbon/human/user as mob)
+	if(iscultist(user))
+		if(!target.stat)	//if he is not half dead already
+			if(strikes >= 3)
+				strikes = 0
+				charges++
+				var/msg =pick("UOAAMmm","VIUOMmm","ZUMmm")
+				user.visible_message("\blue \i [msg]")
+			else
+				strikes++
+		return ..()
+	return
+	
+/obj/item/weapon/melee/cultblade/vorpal/attack_self(mob/user as mob)
+	if(iscultist(user) && isturf(user.loc) && charges >= 1)
+		//new /obj/effect/rend(get_turf(usr))
+		charges--
+		user.visible_message("\red [usr] evaporates into the air!")
+		var/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/jump = new /obj/effect/proc_holder/spell/targeted/ethereal_jaunt
+		jump.choose_targets()
+	else
+		user << "\red \i Silence..."
+		
+/obj/item/weapon/gun/magic/wand/polymorph/cult
+	projectile_type = "/obj/item/projectile/magic/change/cult"
+	max_charges = 8 //8, 4, 4, 3
+	
+/obj/item/projectile/magic/change/cult
+	name = "bolt of cult change"
+
+/obj/item/projectile/magic/change/cult/on_hit(var/atom/change)
+	var/mob/living/L = change
+	if(istype(L) && L.mind in ticker.mode.shades)
+		ticker.mode.shades -= L.mind
+	if(is_shade(L) || iscultist(L) || prob(20))		// 20 percent to convert to cult on change on available mobs
+		var/mob/living/new_mob = wabbajack(change)
+		if(!new_mob.mind.cult_words)
+			new_mob.mind.cult_words = list()	//I don't even knwo why words aren't initialized
+		if(isrobot(new_mob))
+			var/mob/living/silicon/robot/bot = new_mob
+			bot.UnlinkSelf()
+			bot.clear_supplied_laws()
+			bot.clear_inherent_laws()
+			bot.set_zeroth_law("NARSIE IS YOUR MASTER! Help the cult succeed.")
+			bot << "\red \b ERROR: Lawset reseti... OBEY NARSIE"
+			bot.show_laws()
+			if(!iscultist(new_mob))
+				if(ticker.mode.name == "cult")
+					ticker.mode:add_cultist(bot.mind)
+				else
+					ticker.mode.cult+=bot.mind
+				ticker.mode.update_cult_icons_added(bot.mind)
+		else if(ishuman(new_mob))	//ismonkey(new_mob) || 
+			if(!iscultist(new_mob))
+				if(ticker.mode.name == "cult")
+					ticker.mode:add_cultist(new_mob.mind)
+				else
+					ticker.mode.cult+=new_mob.mind
+				ticker.mode.update_cult_icons_added(new_mob.mind)
+		else 
+			ticker.mode.remove_cultist(new_mob.mind)
+	else
+		..()
+		
+
+/obj/item/weapon/gun/magic/wand/polymorph/zap_self(mob/living/user as mob)
+	..() //because the user mob ceases to exists by the time wabbajack fully resolves
+	wabbajack(user)
+	charges--
+
 
 /obj/item/clothing/head/culthood
 	name = "cult hood"

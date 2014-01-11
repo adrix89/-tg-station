@@ -90,7 +90,8 @@ var/list/sacrificed = list()
 			if(istype(src,/obj/effect/rune))
 				new /obj/item/weapon/tome(src.loc)
 			else
-				new /obj/item/weapon/tome(usr.loc)
+				var/mob/living/user = usr
+				user.put_in_hands(new /obj/item/weapon/tome(user.loc))
 			del(src)
 			return
 
@@ -776,7 +777,8 @@ var/list/sacrificed = list()
 						tal.uses = 1
 						
 		greater_reward(var/mob/T)
-			var/reward = pick("fireball","smoke","blind","mindswap","forcewall","knock","charge", "wanddeath", "wandresurrection", "wandpolymorph", "wandteleport", "wanddoor", "wandfireball", "armor", "space", "scrying")
+			var/reward = pick("fireball","smoke","blind","mindswap","forcewall","knock","charge", "wanddeath", "wandresurrection", "wandpolymorph", "wandteleport", "wanddoor", "wandfireball", "armor", "space", "scrying","vorpal","ironslayer")
+			var/obj/item/weapon/gun/magic/wand/W
 			switch (reward)
 				if("fireball")
 					new /obj/item/weapon/spellbook/oneuse/fireball(get_turf(src))
@@ -793,15 +795,23 @@ var/list/sacrificed = list()
 				if("charge")
 					new /obj/item/weapon/spellbook/oneuse/charge(get_turf(src))
 				if("wanddeath")
-					new /obj/item/weapon/gun/magic/wand/death(get_turf(src))
+					W = new /obj/item/weapon/gun/magic/wand/death(get_turf(src))
+					W.charges = 1
 				if("wandresurrection")
-					new /obj/item/weapon/gun/magic/wand/resurrection(get_turf(src))
+					W = new /obj/item/weapon/gun/magic/wand/resurrection(get_turf(src))
+					W.charges = 1
+					W.max_charges = 4
 				if("wandpolymorph")
-					new /obj/item/weapon/gun/magic/wand/polymorph(get_turf(src))
+					W = new /obj/item/weapon/gun/magic/wand/polymorph/cult(get_turf(src))
+					W.charges = 4
 				if("wandteleport")
 					new /obj/item/weapon/gun/magic/wand/teleport(get_turf(src))
 				if("wanddoor")
-					new /obj/item/weapon/gun/magic/wand/door(get_turf(src))
+					W = new /obj/item/weapon/gun/magic/wand/door(get_turf(src))
+					W.charges = 7
+					W.max_charges = 10
+				if("wandfireball")
+					new /obj/item/weapon/gun/magic/wand/fireball(get_turf(src))
 				if("armor")
 					new /obj/item/clothing/head/magus(get_turf(src))
 					new /obj/item/clothing/suit/magusred(get_turf(src))
@@ -810,6 +820,10 @@ var/list/sacrificed = list()
 					new /obj/item/clothing/head/helmet/space/cult(get_turf(src))
 					new /obj/item/clothing/suit/space/cult(get_turf(src))
 					new /obj/item/clothing/shoes/cult/galoshes(get_turf(src))
+				if("vorpal")
+					new /obj/item/weapon/melee/cultblade/vorpal(get_turf(src))
+				if("ironslayer")
+					new /obj/item/weapon/melee/ironslayer(get_turf(src))
 				if("scrying")
 					new /obj/item/weapon/scrying(get_turf(src))
 					var/mob/living/carbon/human/H = null
