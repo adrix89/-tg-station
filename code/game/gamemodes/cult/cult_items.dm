@@ -58,7 +58,7 @@
 			capture = 1
 			
 		else if(istype(target, /turf/simulated/wall/r_wall))
-			if(prob(15))
+			if(prob(12))
 				var/turf/simulated/wall/W = target
 				W.dismantle_wall(0,1)
 				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
@@ -72,9 +72,10 @@
 			
 		else if(istype(target,/obj/machinery/door/airlock))
 			var/obj/machinery/door/airlock/D = target
-			if(!D.glass && !(D.doortype in list(9,26,28,29,30,33)) && prob(25))		//only destroy metal doors,and no vault/AI
-				del target
-				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
+			if(!D.glass && !(D.doortype in list(9,26,28,29,30,33)))		//only destroy metal doors,and no vault/AI
+				if(prob(25))
+					del target
+					playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
 				capture = 1
 		else if(target.type in typesof(/obj/machinery/door/poddoor/shutters,/obj/machinery/portable_atmospherics/canister,/obj/structure/rack,/obj/structure/table,/obj/structure/girder,/obj/structure/grille,/obj/structure/closet))
 			target.ex_act(2)
@@ -141,12 +142,9 @@
 
 /obj/item/projectile/magic/change/cult/on_hit(var/atom/change)
 	var/mob/living/L = change
-	if(istype(L) && L.mind in ticker.mode.shades)
-		ticker.mode.shades -= L.mind
-	if(is_shade(L) || iscultist(L) || prob(20))		// 20 percent to convert to cult on change on available mobs
-		var/mob/living/new_mob = wabbajack(change)
-		if(!new_mob.mind.cult_words)
-			new_mob.mind.cult_words = list()	//I don't even knwo why words aren't initialized
+	if(is_support(L) || iscultist(L))		// 20 percent to convert to cult on change on available mobs
+		ticker.mode.support -= L.mind
+		var/mob/living/new_mob = wabbajack(L)
 		if(isrobot(new_mob))
 			var/mob/living/silicon/robot/bot = new_mob
 			bot.UnlinkSelf()
@@ -160,16 +158,18 @@
 					ticker.mode:add_cultist(bot.mind)
 				else
 					ticker.mode.cult+=bot.mind
-				ticker.mode.update_cult_icons_added(bot.mind)
-		else if(ishuman(new_mob))	//ismonkey(new_mob) || 
+		else if(ismonkey(new_mob) || ishuman(new_mob))
 			if(!iscultist(new_mob))
 				if(ticker.mode.name == "cult")
 					ticker.mode:add_cultist(new_mob.mind)
 				else
 					ticker.mode.cult+=new_mob.mind
-				ticker.mode.update_cult_icons_added(new_mob.mind)
+				
 		else 
-			ticker.mode.remove_cultist(new_mob.mind)
+			ticker.mode.remove_cultist(new_mob.mind, 0)
+			ticker.mode.support += new_mob.mind
+			new_mob << "\red \b OBEY NARSIE!"
+		ticker.mode.update_cult_icons_added(new_mob.mind)
 	else
 		..()
 		

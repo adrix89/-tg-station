@@ -2,13 +2,16 @@
 
 /datum/game_mode
 	var/list/datum/mind/cult = list()
-	var/list/datum/mind/shades = list()
+	var/list/datum/mind/support = list()	//not counted as cultist but still part of cult
 	var/list/allwords = list("travel","self","see","hell","blood","join","technology","destroy", "other", "hide")
 	var/list/grantwords =list("travel","self","see","technology","destroy", "other", "hide")
 	var/list/globalwords = list("hell","blood","join")
 
 /proc/iscultist(mob/living/M as mob)
 	return istype(M) && M.mind && ticker && ticker.mode && (M.mind in ticker.mode.cult)
+	
+/proc/is_support(mob/living/M as mob)
+	return istype(M) && M.mind && ticker && ticker.mode && (M.mind in ticker.mode.support)
 	
 /proc/is_shade(mob/M as mob)
 	return istype(M,/mob/living/simple_animal/shade) && M.mind && M.mind.special_role == "Cultist"
@@ -258,7 +261,7 @@
 		cult -= cult_mind
 		cult_mind.current << "\red <FONT size = 3><B>An unfamiliar white light flashes through your mind, cleansing the taint of the dark-one and the memories of your time as his servant with it.</B></FONT>"
 		cult_mind.memory = ""
-		cult_mind.cult_words = initial(cult_mind.cult_words)
+		cult_mind.cult_words = list()
 		update_cult_icons_removed(cult_mind)
 		cult_mind.current.attack_log += "\[[time_stamp()]\] <font color='red'>Has renounced the cult!</font>"
 		if(show_message)
@@ -286,6 +289,15 @@
 /datum/game_mode/proc/update_cult_icons_added(datum/mind/cult_mind)
 	spawn(0)
 		for(var/datum/mind/cultist in cult)
+			if(cultist.current)
+				if(cultist.current.client)
+					var/I = image('icons/mob/mob.dmi', loc = cult_mind.current, icon_state = "cult")
+					cultist.current.client.images += I
+			if(cult_mind.current)
+				if(cult_mind.current.client)
+					var/image/J = image('icons/mob/mob.dmi', loc = cultist.current, icon_state = "cult")
+					cult_mind.current.client.images += J
+		for(var/datum/mind/cultist in support)
 			if(cultist.current)
 				if(cultist.current.client)
 					var/I = image('icons/mob/mob.dmi', loc = cult_mind.current, icon_state = "cult")

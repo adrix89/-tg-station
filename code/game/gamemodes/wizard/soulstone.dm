@@ -114,7 +114,7 @@
 				S.name = "Shade of [T.real_name]"
 				S.real_name = "Shade of [T.real_name]"
 				S.key = T.key
-				ticker.mode.shades += S.mind
+				ticker.mode.support += S.mind
 				S.cancel_camera()
 				C.icon_state = "soulstone2"
 				C.name = "Soul Stone: [S.real_name]"
@@ -155,7 +155,7 @@
 							S.name = "Shade of [T.real_name]"
 							S.real_name = "Shade of [T.real_name]"
 							S.key = T.key
-							ticker.mode.shades += S.mind
+							ticker.mode.support += S.mind
 							S.cancel_camera()
 							C.icon_state = "soulstone2"
 							C.name = "Soul Stone: [S.real_name]"
@@ -194,7 +194,7 @@
 					if("Juggernaut")
 						var/mob/living/simple_animal/construct/armoured/Z = new /mob/living/simple_animal/construct/armoured (get_turf(T.loc))
 						Z.key = A.key
-						ticker.mode.shades -= Z.mind
+						ticker.mode.support -= Z.mind
 						if(iscultist(U))
 							if(ticker.mode.name == "cult")
 								ticker.mode:add_cultist(Z.mind)
@@ -210,7 +210,7 @@
 					if("Wraith")
 						var/mob/living/simple_animal/construct/wraith/Z = new /mob/living/simple_animal/construct/wraith (get_turf(T.loc))
 						Z.key = A.key
-						ticker.mode.shades -= Z.mind
+						ticker.mode.support -= Z.mind
 						if(iscultist(U))
 							if(ticker.mode.name == "cult")
 								ticker.mode:add_cultist(Z.mind)
@@ -226,7 +226,7 @@
 					if("Artificer")
 						var/mob/living/simple_animal/construct/builder/Z = new /mob/living/simple_animal/construct/builder (get_turf(T.loc))
 						Z.key = A.key
-						ticker.mode.shades -= Z.mind
+						ticker.mode.support -= Z.mind
 						if(iscultist(U))
 							if(ticker.mode.name == "cult")
 								ticker.mode:add_cultist(Z.mind)

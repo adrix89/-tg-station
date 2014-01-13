@@ -596,7 +596,7 @@ var/list/sacrificed = list()
 			for(var/datum/mind/H in ticker.mode.cult)
 				if (H.current)
 					H.current << "\red \b [input]"
-			for(var/datum/mind/H in ticker.mode.shades)		//now shades can hear messages without messing other stuff.
+			for(var/datum/mind/H in ticker.mode.support)		//now shades can hear messages without messing other stuff.
 				if (H.current)
 					H.current << "\red \b [input]"
 			return 1
