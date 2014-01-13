@@ -611,6 +611,8 @@ datum/mind
 						var/datum/game_mode/cult/cult = ticker.mode
 						if (istype(cult))
 							cult.memorize_cult_objectives(src)
+						else
+							cult.learn_words(src,1)
 						message_admins("[key_name_admin(usr)] has cult'ed [current].")
 						log_admin("[key_name(usr)] has cult'ed [current].")
 				if("tome")
@@ -1066,8 +1068,9 @@ datum/mind
 				var/explanation = "Summon Nar-Sie via the use of the appropriate rune (Hell join self). It will only work if nine cultists stand on and around it."
 				current << "<B>Objective #1</B>: [explanation]"
 				current.memory += "<B>Objective #1</B>: [explanation]<BR>"
-				current << "The convert rune is join blood self"
-				current.memory += "The convert rune is join blood self<BR>"
+				current << "The sacrifice rune is hell join blood"
+				current.memory += "The sacrifice rune is hell join blood<BR>"
+				cult.learn_words(src,1)
 
 		var/mob/living/carbon/human/H = current
 		if (istype(H))
