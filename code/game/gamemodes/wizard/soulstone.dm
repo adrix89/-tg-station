@@ -240,4 +240,36 @@
 						del(C)
 			else
 				U << "\red <b>Creation failed!</b>: \black The soul stone is empty! Go kill someone!"
+		if("CONSTRUCT2")
+			var/obj/item/device/soulstone/C = src
+			var/mob/living/simple_animal/construct/cons = target
+			if(istype(cons))
+				if (cons.stat == DEAD)
+					U << "\red <b>Capture failed!</b>: \black construct has already been destroyed!"
+					return 0
+				if(cons.client != null)
+					if(C.contents.len)
+						U << "\red <b>Capture failed!</b>: \black The soul stone is full! Use or free an existing soul to make room."
+						return 0
+					cons.invisibility = 101
+					new /obj/item/weapon/ectoplasm (cons.loc)
+					for(var/mob/M in viewers(cons))
+						if((M.client && !( M.blinded )))
+							M.show_message("\red [cons] collapses in a shattered heap. ")
+					var/mob/living/simple_animal/shade/S = new /mob/living/simple_animal/shade( cons.loc )
+					S.loc = C //put shade in stone
+					S.status_flags |= GODMODE //So they won't die inside the stone somehow
+					S.canmove = 0//Can't move out of the soul stone
+					S.name = "Shade of [cons.real_name]"
+					S.real_name = "Shade of [cons.real_name]"
+					ticker.mode.remove_cultist(cons.mind, 0)
+					S.key = cons.key
+					ticker.mode.support += S.mind
+					S.cancel_camera()
+					C.icon_state = "soulstone2"
+					C.name = "Soul Stone: [S.real_name]"
+					S << "\blue <b>Transfer complete!</b> \black You are now bound to [U.name]'s will."
+					C.imprinted = "[S.name]"
+					del cons
+					return 1
 	return 0

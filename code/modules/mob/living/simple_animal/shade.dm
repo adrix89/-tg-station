@@ -14,7 +14,7 @@
 	response_disarm = "flails at"
 	response_harm   = "punches"
 	melee_damage_lower = 5
-	melee_damage_upper = 10
+	melee_damage_upper = 5
 	attacktext = "drains the life from"
 	minbodytemp = 0
 	maxbodytemp = 4000
@@ -23,14 +23,18 @@
 	max_tox = 0
 	speed = 0
 	//luminosity = 2
-	see_in_dark = 7
+	see_in_dark = 4
+	//sight = SEE_TURFS
+	see_invisible = SEE_INVISIBLE_MINIMUM
 	stop_automated_movement = 1
 	status_flags = 0
 	faction = "cult"
 	status_flags = CANPUSH
 	
+/mob/living/simple_animal/shade/Process_Spacemove(var/check_drift = 0)
+	return 1	//No drifting in space for space carp!	//original comments do not steal	//stolen
+	
 /mob/living/simple_animal/shade/Bump(var/atom/obstacle)
-	//if(canmove && !obstacle.CanPass(src,obstacle.loc,1))
 	spawn()
 		if(canmove)
 			canmove = 0
@@ -44,8 +48,6 @@
 	if(A == src)
 		return
 	..()
-	if(CanAttack(A))
-		src.heal_organ_damage(5,0)		//small heal from drain
 	if(istype(A,/obj/effect/rune))
 		var/obj/effect/rune/R = A
 		R.shade_attack(src)

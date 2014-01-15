@@ -21,7 +21,7 @@
 	desc = "This spell constructs a cult wall"
 
 	school = "conjuration"
-	charge_max = 100
+	charge_max = 70
 	clothes_req = 0
 	invocation = "none"
 	invocation_type = "none"

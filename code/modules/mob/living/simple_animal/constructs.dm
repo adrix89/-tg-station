@@ -13,6 +13,7 @@
 	a_intent = "harm"
 	stop_automated_movement = 1
 	status_flags = CANPUSH
+	see_invisible = SEE_INVISIBLE_MINIMUM
 	attack_sound = 'sound/weapons/punch1.ogg'
 	min_oxy = 0
 	max_oxy = 0
@@ -59,6 +60,9 @@
 	usr << msg
 	return
 
+/mob/living/simple_animal/construct/Process_Spacemove(var/check_drift = 0)
+	return 1
+	
 /mob/living/simple_animal/construct/Bump(atom/movable/AM as mob|obj, yes)
 	if ((!( yes ) || now_pushing))
 		return
@@ -104,7 +108,14 @@
 			adjustBruteLoss(damage)
 
 /mob/living/simple_animal/construct/attackby(var/obj/item/O as obj, var/mob/user as mob)
-	if(O.force)
+	if(istype(O,/obj/item/device/soulstone) && iscultist(user))
+		O.transfer_soul("CONSTRUCT2",src,user)
+	else if(istype(O,/obj/item/weapon/nullrod))
+		adjustBruteLoss(50)
+		for(var/mob/M in viewers(src, null))
+			if ((M.client && !( M.blinded )))
+				M.show_message("\red \b [src] has been dealt a mighty blow by [user]'s nullrod. ")
+	else if(O.force)
 		var/damage = O.force
 		if (O.damtype == HALLOSS)
 			damage = 0
@@ -145,7 +156,14 @@
 	construct_spells = list(/obj/effect/proc_holder/spell/aoe_turf/conjure/lesserforcewall)
 
 /mob/living/simple_animal/construct/armoured/attackby(var/obj/item/O as obj, var/mob/user as mob)
-	if(O.force)
+	if(istype(O,/obj/item/device/soulstone) && iscultist(user))
+		O.transfer_soul("CONSTRUCT2",src,user)
+	else if(istype(O,/obj/item/weapon/nullrod))
+		adjustBruteLoss(50)
+		for(var/mob/M in viewers(src, null))
+			if ((M.client && !( M.blinded )))
+				M.show_message("\red \b [src] has been dealt a mighty blow by [user]'s nullrod. ")
+	else if(O.force)
 		if(O.force >= 11)
 			var/damage = O.force
 			if (O.damtype == HALLOSS)
@@ -215,7 +233,6 @@
 	construct_spells = list(/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/shift)
 
 
-
 /////////////////////////////Artificer/////////////////////////
 
 
@@ -269,8 +286,15 @@
 	var/max_energy = 1000
 
 /mob/living/simple_animal/construct/behemoth/attackby(var/obj/item/O as obj, var/mob/user as mob)
-	if(O.force)
-		if(O.force >= 11)
+	if(istype(O,/obj/item/device/soulstone) && iscultist(user))
+		O.transfer_soul("CONSTRUCT2",src,user)
+	else if(istype(O,/obj/item/weapon/nullrod))
+		adjustBruteLoss(50)
+		for(var/mob/M in viewers(src, null))
+			if ((M.client && !( M.blinded )))
+				M.show_message("\red \b [src] has been dealt a mighty blow by [user]'s nullrod. ")
+	else if(O.force)
+		if(O.force >= 16)
 			var/damage = O.force
 			if (O.damtype == HALLOSS)
 				damage = 0
