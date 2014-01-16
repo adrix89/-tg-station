@@ -117,7 +117,7 @@
 				strikes = 0
 				charges++
 				var/msg =pick("UOAAMmm","VIUOMmm","ZUMmm")
-				user.visible_message("\blue \i [msg]")
+				user.visible_message("<span class='telepath'> \i [msg]</span>")
 			else
 				strikes++
 		return ..()
@@ -173,12 +173,6 @@
 	else
 		..()
 		
-
-/obj/item/weapon/gun/magic/wand/polymorph/zap_self(mob/living/user as mob)
-	..() //because the user mob ceases to exists by the time wabbajack fully resolves
-	wabbajack(user)
-	charges--
-
 
 /obj/item/clothing/head/culthood
 	name = "cult hood"

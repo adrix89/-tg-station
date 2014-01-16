@@ -184,7 +184,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 		if(word1 == wordjoin && word2 == wordother && word3 == wordself)
 			return cultsummon()
 		if(word1 == wordhide && word2 == wordother && word3 == wordsee)
-			return deafen()
+			return silence()
 		if(word1 == worddestr && word2 == wordsee && word3 == wordother)
 			return blind()
 		if(word1 == worddestr && word2 == wordsee && word3 == wordblood)
@@ -228,7 +228,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			if(word1 == worddestr && word2 == wordtravel && word3 == wordself)
 				return wall()
 			if(word1 == wordhide && word2 == wordother && word3 == wordsee)
-				return deafen()
+				return silence()
 			if(word1 == worddestr && word2 == wordsee && word3 == wordother)
 				return blind()
 			if(word1 == wordself && word2 == wordother && word3 == wordtech)
@@ -326,7 +326,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				icon_state = "2"
 				src.icon += rgb(100, 0, 100)
 				return
-			if(word1 == wordsee && word2 == wordblood && word3 == wordhell)
+			if(word1 == wordhell && word2 == worddestr && word3 == wordother)
 				icon_state="[rand(1,6)]" //random shape and color for dummy runes
 				src.icon -= rgb(255,255,255)
 				src.icon += rgb(rand(1,255),rand(1,255),rand(1,255))
@@ -415,7 +415,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<h3>Manifest a ghost</h3>
 				Unlike the Raise Dead rune, this rune does not require any special preparations or vessels. Instead of using full lifeforce of a sacrifice, it will drain YOUR lifeforce. Stand on the rune and invoke it. If theres a ghost standing over the rune, it will materialise, and will live as long as you dont move off the rune or die. You can put a paper with a name on the rune to make the new body look like that person.<br>
 				<h3>Imbue a talisman</h3>
-				This rune allows you to imbue the magic of some runes into paper talismans. Create an imbue rune, then an appropriate rune beside it. Put an empty piece of paper on the imbue rune and invoke it. You will now have a one-use talisman with the power of the target rune. Using a talisman drains some health, so be careful with it. You can imbue a talisman with power of the following runes: summon tome, reveal, conceal, teleport, tisable technology, communicate, deafen, blind and stun.<br>
+				This rune allows you to imbue the magic of some runes into paper talismans. Create an imbue rune, then an appropriate rune beside it. Put an empty piece of paper on the imbue rune and invoke it. You will now have a one-use talisman with the power of the target rune. Using a talisman drains some health, so be careful with it. You can imbue a talisman with power of the following runes: summon tome, reveal, conceal, teleport, tisable technology, communicate, silence, blind and stun.<br>
 				<h3>Sacrifice</h3>
 				Sacrifice rune allows you to sacrifice a living thing or a body to the Geometer of Blood. Monkeys and dead humans are the most basic sacrifices, they might or might not be enough to gain His favor. A living human is what a real sacrifice should be, however, you will need 3 people chanting the invocation to sacrifice a living person or an enchanted cultist armor and sword.
 				<h3>Create a wall</h3>
@@ -424,10 +424,10 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				This rune allows you to summon a fellow cultist to your location. The target cultist must be unhandcuffed ant not buckled to anything. You also need to have 3 people chanting at the rune to successfully invoke it. Invoking it takes heavy strain on the bodies of all chanting cultists.<br>
 				<h3>Free a cultist</h3>
 				This rune unhandcuffs and unbuckles any cultist of your choice, no matter where he is. Invoking it takes heavy strain on the bodies of all chanting cultists.<br>
-				<h3>Deafen</h3>
-				This rune temporarily deafens all non-cultists around you.<br>
+				<h3>Silence</h3>
+				This rune temporarily silence and deafen all non-cultists around you.<br>
 				<h3>Blind</h3>
-				This rune temporarily blinds all non-cultists around you. Very robust. Use together with the deafen rune to leave your enemies completely helpless.<br>
+				This rune temporarily blinds all non-cultists around you. Very robust. Use together with the silence rune to leave your enemies completely helpless.<br>
 				<h3>Blood boil</h3>
 				This rune boils the blood all non-cultists in visible range. The damage is enough to instantly critically hurt any person. You need 3 cultists invoking the rune for it to work. This rune is unreliable and may cause unpredicted effect when invoked. It also drains significant amount of your health when successfully invoked.<br>
 				<h3>Communicate</h3>
@@ -591,7 +591,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				"sacrifice" = list("hell","blood","join"),
 				"summon cultist" = list("join","other","self"),
 				"free cultist" = list("travel","technology","other"),
-				"deafen" = list("hide","other","see"),
+				"silence" = list("hide","other","see"),
 				"blind" = list("destroy","see","other"),
 				"stun" = list("join","hide","technology"),
 				"armor" = list("hell","destroy","other"),
@@ -695,7 +695,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			var/r
 			if (!istype(user.loc,/turf))
 				user << "\red You do not have enough space to write a proper rune."
-			var/list/runes = list("teleport", "itemport", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "obscure", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "deafen", "blind", "bloodboil", "communicate", "stun")
+			var/list/runes = list("teleport", "itemport", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "obscure", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "silence", "blind", "bloodboil", "communicate", "stun")
 			r = input("Choose a rune to scribe", "Rune Scribing") in runes //not cancellable.
 			var/obj/effect/rune/R = new /obj/effect/rune
 			if(istype(user, /mob/living/carbon/human))
@@ -825,7 +825,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 					R.word3=wordself
 					R.loc = user.loc
 					R.check_icon()
-				if("deafen")
+				if("silence")
 					R.word1=wordhide
 					R.word2=wordother
 					R.word3=wordsee

@@ -53,7 +53,7 @@ var/next_mob_id = 0
 			else
 				msg = alt
 				type = alt_type
-				if ((type & 1 && sdisabilities & BLIND))
+				if ((type & 1 && sdisabilities & BLIND || blinded))
 					return
 	// Added voice muffling for Issue 41.
 	if(stat == UNCONSCIOUS || sleeping > 0)

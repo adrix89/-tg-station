@@ -49,6 +49,7 @@ h1.alert, h2.alert		{color: #000000;}
 .userdanger				{color: #ff0000;	font-weight: bold;}
 .danger					{color: #ff0000;}
 .warning				{color: #ff0000;	font-style: italic;}
+.telepath				{color: #663399;}
 .rose					{color: #ff5050;}
 .info					{color: #0000CC;}
 .notice					{color: #000099;}

@@ -1017,6 +1017,7 @@
 			if(healths)		healths.icon_state = "health7"	//DEAD healthmeter
 		else
 			sight &= ~(SEE_TURFS|SEE_MOBS|SEE_OBJS)
+			see_invisible = SEE_INVISIBLE_LIVING
 			if(dna)
 				switch(dna.mutantrace)
 					if("lizard","slime")
@@ -1085,8 +1086,8 @@
 					if(!druggy)
 						see_invisible = SEE_INVISIBLE_MINIMUM
 
-	/* HUD shit goes here, as long as it doesn't modify sight flags */
-	// The purpose of this is to stop xray and w/e from preventing you from using huds -- Love, Doohl
+				/* HUD shit goes here, as long as it doesn't modify sight flags */
+				// The purpose of this is to stop xray and w/e from preventing you from using huds -- Love, Doohl
 
 				else if(istype(glasses, /obj/item/clothing/glasses/sunglasses))
 					see_in_dark = 1
@@ -1102,8 +1103,6 @@
 						see_invisible = SEE_INVISIBLE_LIVING
 				else
 					see_invisible = SEE_INVISIBLE_LIVING
-			else
-				see_invisible = SEE_INVISIBLE_LIVING
 
 			if(healths)
 				switch(hal_screwyhud)

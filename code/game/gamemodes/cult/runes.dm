@@ -89,9 +89,6 @@ var/list/sacrificed = list()
 			"\red You hear a pop and smell ozone.")
 			if(istype(src,/obj/effect/rune))
 				new /obj/item/weapon/tome(src.loc)
-			else
-				var/mob/living/user = usr
-				user.put_in_hands(new /obj/item/weapon/tome(user.loc))
 			del(src)
 			return
 
@@ -267,14 +264,15 @@ var/list/sacrificed = list()
 /////////////////////////////////////////SEVENTH RUNE
 
 		seer()
-			if(usr.loc==src.loc)
-				usr.say("Rash'tla sektath mal[pick("'","`")]zua. Zasan therium vivira. Itonis al'ra matum!")
-				if(usr.see_invisible!=0 && usr.see_invisible!=15)
-					usr << "\red The world beyond flashes your eyes but disappears quickly, as if something is disrupting your vision."
+			var/mob/living/carbon/human/user = usr
+			if(user.loc==user.loc)
+				user.say("Rash'tla sektath mal[pick("'","`")]zua. Zasan therium vivira. Itonis al'ra matum!")
+				if(user.see_invisible == 25 && !user.glasses)
+					user << "<span class='telepath'> The world beyond opens to your eyes.</span>"
 				else
-					usr << "\red The world beyond opens to your eyes."
-				usr.see_invisible = SEE_INVISIBLE_OBSERVER
-				usr.seer = 1
+					user << "<span class='telepath'> The world beyond flashes your eyes but disappears quickly, as if something is disrupting your vision.</span>"
+				user.see_invisible = SEE_INVISIBLE_OBSERVER
+				user.seer = 1
 				return
 			return fizzle()
 
@@ -412,6 +410,7 @@ var/list/sacrificed = list()
 				while(L)
 					if(L.key)
 						L.ajourn=0
+						ticker.mode.update_cult_icons_added(L.mind)
 						return
 					else
 						L.take_organ_damage(7, 0)
@@ -439,8 +438,12 @@ var/list/sacrificed = list()
 
 			usr.say("Gal'h'rfikk harfrandid mud[pick("'","`")]gib!")
 			var/mob/living/carbon/human/dummy/D = new(this_rune.loc)
-			usr.visible_message("\red A shape forms in the center of the rune. A shape of... a man.", \
-			"\red A shape forms in the center of the rune. A shape of... a man.", \
+			ready_dna(D)
+			if(D.dna)
+				D.dna.mutantrace = pick("golem","shadow","skeleton","")
+				D.update_body()
+			usr.visible_message("\red A shape forms in the center of the rune. A shape of... a man, kinda.", \
+			"\red A shape forms in the center of the rune. A shape of... a man, kinda.", \
 			"\red You hear liquid flowing.")
 			D.real_name = "[pick(first_names_male)] [pick(last_names)]"
 			D.universal_speak = 1
@@ -452,7 +455,7 @@ var/list/sacrificed = list()
 				ticker.mode:add_cultist(D.mind)
 			else
 				ticker.mode.cult+=D.mind
-
+			ticker.mode.update_cult_icons_added(D.mind)
 			D.mind.special_role = "Cultist"
 			D << "<font color=\"purple\"><b><i>Your blood pulses. Your head throbs. The world goes red. All at once you are aware of a horrible, horrible truth. The veil of reality has been ripped away and in the festering wound left behind something sinister takes root.</b></i></font>"
 			D << "<font color=\"purple\"><b><i>Assist your new compatriots in their dark dealings. Their goal is yours, and yours is theirs. You serve the Dark One above all else. Bring It back.</b></i></font>"
@@ -474,7 +477,7 @@ var/list/sacrificed = list()
 
 /////////////////////////////////////////TWELFTH RUNE
 
-		talisman()//only hide, emp, teleport, deafen, blind and tome runes can be imbued atm
+		talisman()//only hide, emp, teleport, silence, blind and tome runes can be imbued atm
 			var/obj/item/weapon/paper/newtalisman
 			var/unsuitable_newtalisman = 0
 			for(var/obj/item/weapon/paper/P in src.loc)
@@ -524,9 +527,9 @@ var/list/sacrificed = list()
 					T.imbue = "revealrunes"
 					imbued_from = R
 					break
-				if(R.word1==wordhide && R.word2==wordother && R.word3==wordsee) //deafen
+				if(R.word1==wordhide && R.word2==wordother && R.word3==wordsee) //silence
 					T = new(src.loc)
-					T.imbue = "deafen"
+					T.imbue = "silence"
 					imbued_from = R
 					break
 				if(R.word1==worddestr && R.word2==wordsee && R.word3==wordother) //blind
@@ -595,10 +598,10 @@ var/list/sacrificed = list()
 				usr.whisper("[input]")
 			for(var/datum/mind/H in ticker.mode.cult)
 				if (H.current)
-					H.current << "\red \b [input]"
+					H.current << "<span class='telepath'> \b [input] </span>"
 			for(var/datum/mind/H in ticker.mode.support)		//now shades can hear messages without messing other stuff.
 				if (H.current)
-					H.current << "\red \b [input]"
+					H.current << "<span class='telepath'> \b [input] </span>"
 			return 1
 
 /////////////////////////////////////////FIFTEENTH RUNE
@@ -633,8 +636,8 @@ var/list/sacrificed = list()
 				if (ticker.mode.name == "cult" && H.mind == ticker.mode:sacrifice_target)
 					if(cultsinrange.len >= 3)
 						sacrificed += H.mind
-						usr << "\red The Geometer of Blood accepts this sacrifice, your objective is now complete."
-						usr << "\red He is pleased!"
+						usr << "<span class='telepath'> The Geometer of Blood accepts this sacrifice, your objective is now complete. </span>"
+						usr << "<span class='telepath'> He is pleased! </span>"
 						sac_grant_word()
 						sac_grant_word()
 						sac_grant_word()
@@ -655,7 +658,7 @@ var/list/sacrificed = list()
 				else
 					if(H.stat !=2)
 						if(cultsinrange.len >= 3)
-							usr << "\red The Geometer of Blood accepts this sacrifice."
+							usr << "<span class='telepath'> The Geometer of Blood accepts this sacrifice. </span>"
 							sac_grant_word()
 							if(ticker.mode.globalwords.len == ticker.mode.allwords.len)		//If they have all words Narsie is pleased
 								greater_reward(H)
@@ -673,11 +676,11 @@ var/list/sacrificed = list()
 						
 					else
 						if(prob(60))
-							usr << "\red The Geometer of blood accepts this sacrifice."
+							usr << "<span class='telepath'> The Geometer of blood accepts this sacrifice. </span>"
 							sac_grant_word()
 						else
-							usr << "\red The Geometer of blood accepts this sacrifice."
-							usr << "\red However, a mere dead body is not enough to satisfy Him."
+							usr << "<span class='telepath'> The Geometer of blood accepts this sacrifice. </span>"
+							usr << "<span class='telepath'> However, a mere dead body is not enough to satisfy Him. </span>"
 						stone_or_gib(H)
 			for(var/mob/living/carbon/monkey/H in src.loc)
 				if (ticker.mode.name == "cult")
@@ -722,10 +725,10 @@ var/list/sacrificed = list()
 				"\red A sense of dread assails you.")
 				user.take_overall_damage(30, 0)
 				if(target)
-					usr << "\red The Geometer of Blood accepts this sacrifice, your objective is now complete."
-					usr << "\red He is pleased!"
+					usr << "<span class='telepath'> The Geometer of Blood accepts this sacrifice, your objective is now complete. </span>"
+					usr << "<span class='telepath'> He is pleased! </span>"
 				else
-					usr << "\red The Geometer of Blood accepts this sacrifice."
+					usr << "<span class='telepath'> The Geometer of Blood accepts this sacrifice. </span>"
 			transmit_words()	//transmit to others
 /*			for(var/mob/living/carbon/alien/A)
 				for(var/mob/K in cultsinrange)
@@ -987,7 +990,7 @@ var/list/sacrificed = list()
 			for(var/mob/living/carbon/C in orange(1,src))
 				if(iscultist(C) && !C.stat)
 					users+=C
-			if(users.len>=3)
+			if(users.len>=2)
 				var/mob/living/carbon/cultist = input("Choose the one who you want to summon", "Followers of Geometer") as null|anything in (cultists - user)
 				if(!cultist)
 					return fizzle()
@@ -1011,7 +1014,7 @@ var/list/sacrificed = list()
 
 /////////////////////////////////////////TWENTIETH RUNES
 
-		deafen()
+		silence()
 			if(istype(src,/obj/effect/rune))
 				var/affected = 0
 				for(var/mob/living/carbon/C in range(7,src))
@@ -1021,13 +1024,14 @@ var/list/sacrificed = list()
 					if(N)
 						continue
 					C.ear_deaf += 50
+					C.silent += 50
 					C.show_message("\red The world around you suddenly becomes quiet.", 3)
 					affected++
 					if(prob(1))
 						C.sdisabilities |= DEAF
 				if(affected)
 					usr.say("Sti[pick("'","`")] kaliedir!")
-					usr << "\red The world becomes quiet as the deafening rune dissipates into fine dust."
+					usr << "\red The world becomes quiet as the silence rune dissipates into fine dust."
 					del(src)
 				else
 					return fizzle()
@@ -1040,12 +1044,13 @@ var/list/sacrificed = list()
 					if(N)
 						continue
 					C.ear_deaf += 30
+					C.silent += 30
 					//talismans is weaker.
 					C.show_message("\red The world around you suddenly becomes quiet.", 3)
 					affected++
 				if(affected)
 					usr.whisper("Sti[pick("'","`")] kaliedir!")
-					usr << "\red Your talisman turns into gray dust, deafening everyone around."
+					usr << "\red Your talisman turns into gray dust,your enemies will not hear or speak a thing."
 					for (var/mob/V in orange(1,src))
 						if(!(iscultist(V)))
 							V.show_message("\red Dust flows from [usr]'s hands for a moment, and the world suddenly becomes quiet..", 3)

@@ -595,9 +595,8 @@ datum/mind
 						ticker.mode.update_cult_icons_removed(src)
 						special_role = null
 						var/datum/game_mode/cult/cult = ticker.mode
-						if (istype(cult))
-							cult.memorize_cult_objectives(src)
 						current << "\red <FONT size = 3><B>You have been brainwashed! You are no longer a cultist!</B></FONT>"
+						cult.remove_cultist(src,0)
 						memory = ""
 						message_admins("[key_name_admin(usr)] has de-cult'ed [current].")
 						log_admin("[key_name(usr)] has de-cult'ed [current].")

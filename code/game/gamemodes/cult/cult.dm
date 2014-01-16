@@ -54,7 +54,7 @@
 
 /datum/game_mode/cult/announce()
 	world << "<B>The current game mode is - Cult!</B>"
-	world << "<B>Some crewmembers are attempting to start a cult!<BR>\nCultists - complete your objectives. Convert crewmembers to your cause by using the convert rune. Remember - there is no you, there is only the cult.<BR>\nPersonnel - Do not let the cult succeed in its mission. Brainwashing them with the chaplain's bible reverts them to whatever Centcom-allowed faith they had.</B>"
+	world << "<B>Some crewmembers are attempting to start a cult!<BR>\nCultists - complete your objectives. Sacrifice crewmembers to please your god and convert those who are worthy to your cause. Remember - there is no you, there is only the cult.<BR>\nPersonnel - Do not let the cult succeed in its mission.</B>"
 
 
 /datum/game_mode/cult/pre_setup()
@@ -121,7 +121,7 @@
 
 
 /datum/game_mode/cult/proc/memorize_cult_objectives(var/datum/mind/cult_mind)
-	var/note ={"<font size='2' color=#330099>Note from adrix89:<BR>The cult gamemode has had a bit of a redesign and information is not yet available on the wiki so I am here to give you some starter tips:<BR>Cult now is intended to be played as a team, you need 3 cultists to use sacrifice or convert runes, so get together and plan ahead.<BR>You can find other cultists by just looking around the station or setting up a meeting place with the communication talisman.<BR>You can solo if you utilize your armor talisman it's still a good idea to have at least one cultist around to lure people stealthily.<BR>Sacrificed players now become soulstones, shades can now use teleport,teleport other,emp,seer,hide,reveal,wall,deafen,blind,stun and communicate runes.<BR>It is important to prepare whatever runes you can as fast as you get them, if you get caught always have a means to escape.<BR><BR>This mode is on trial,suggestions,complains and feedback can be given http://www.ss13.eu/phpbb/viewtopic.php?f=5&t=2688 , if you don't like it, it will be removed, so don't worry and just give it your best shot.</font>"}
+	var/note ={"<font size='2' color=#330099>Note from adrix89:<BR>The cult gamemode has had a bit of a redesign and information is not yet available on the wiki so I am here to give you some starter tips:<BR>Cult now is intended to be played as a team, you need 3 cultists to use sacrifice or convert runes, so get together and plan ahead.<BR>You can find other cultists by just looking around the station or setting up a meeting place with the communication talisman.<BR>You can solo if you utilize your armor talisman it's still a good idea to have at least one cultist around to lure people stealthily.<BR>Sacrificed players now become soulstones, shades can now use teleport,teleport other,emp,seer,hide,reveal,wall,silence,blind,stun and communicate runes.<BR>It is important to prepare whatever runes you can as fast as you get them, if you get caught always have a means to escape.<BR><BR>This mode is on trial,suggestions,complains and feedback can be given http://www.ss13.eu/phpbb/viewtopic.php?f=5&t=2688 , if you don't like it, it will be removed, so don't worry and just give it your best shot.</font>"}
 	cult_mind.memory += note
 	cult_mind.memory += "<HR><BR>"
 	for(var/obj_count = 1,obj_count <= objectives.len,obj_count++)
@@ -220,9 +220,9 @@
 	if(!(word in globalwords))
 		globalwords += word
 	if(trans)
-		cult_mob << "<span class='warning'>Knowledge seeps into your mind... [wordexp]</span>"
+		cult_mob << "<span class='telepath'> \i Knowledge seeps into your mind... [wordexp]</span>"
 	else
-		cult_mob << "<span class='warning'> [pick("You remember something from the dark teachings of your master","You hear a dark voice on the wind","Black blood oozes into your vision and forms into symbols","You catch a brief glimmer of the otherside")]... [wordexp]</span>"
+		cult_mob << "<span class='telepath'> \i [pick("You remember something from the dark teachings of your master","You hear a dark voice on the wind","Black blood oozes into your vision and forms into symbols","You catch a brief glimmer of the otherside")]... [wordexp]</span>"
 	if(word in cult_mob.mind.cult_words)		//don't store repeats in memory
 		return
 	cult_mob.mind.store_memory("<B>You remember that</B> [wordexp]", 0, 0)
