@@ -38,7 +38,7 @@
 	spawn()
 		if(canmove)
 			canmove = 0
-			flick("shadow", src)
+			flick("shade-phase", src)
 			//anim(src.loc,src,'icons/mob/mob.dmi',,"shadow",,src.dir)
 			src.loc = get_step(src,src.dir)
 			sleep(10)
