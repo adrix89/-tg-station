@@ -158,7 +158,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 		if(word1 == wordhell && word2 == wordjoin && word3 == wordself)
 			return tearreality()
 		if(word1 == worddestr && word2 == wordsee && word3 == wordtech)
-			return emp(src.loc,3)
+			return emp(src.loc,4)
 		if(word1 == wordtravel && word2 == wordblood && word3 == wordself)
 			return drain()
 		if(word1 == wordsee && word2 == wordhell && word3 == wordjoin)

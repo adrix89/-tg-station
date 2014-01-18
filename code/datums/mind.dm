@@ -591,12 +591,9 @@ datum/mind
 			switch(href_list["cult"])
 				if("clear")
 					if(src in ticker.mode.cult)
-						ticker.mode.cult -= src
-						ticker.mode.update_cult_icons_removed(src)
+						ticker.mode.remove_cultist(src,0)
 						special_role = null
-						var/datum/game_mode/cult/cult = ticker.mode
 						current << "\red <FONT size = 3><B>You have been brainwashed! You are no longer a cultist!</B></FONT>"
-						cult.remove_cultist(src,0)
 						memory = ""
 						message_admins("[key_name_admin(usr)] has de-cult'ed [current].")
 						log_admin("[key_name(usr)] has de-cult'ed [current].")

@@ -265,14 +265,19 @@ var/list/sacrificed = list()
 
 		seer()
 			var/mob/living/carbon/human/user = usr
-			if(user.loc==user.loc)
+			if(user.loc==src.loc)
 				user.say("Rash'tla sektath mal[pick("'","`")]zua. Zasan therium vivira. Itonis al'ra matum!")
 				if(user.see_invisible == 25 && !user.glasses)
 					user << "<span class='telepath'> The world beyond opens to your eyes.</span>"
 				else
 					user << "<span class='telepath'> The world beyond flashes your eyes but disappears quickly, as if something is disrupting your vision.</span>"
+				var/temp_see = user.see_invisible
 				user.see_invisible = SEE_INVISIBLE_OBSERVER
 				user.seer = 1
+				while(user.loc==src.loc)		//because life sucks
+					sleep(50)
+				user.seer = 0
+				user.see_invisible = temp_see
 				return
 			return fizzle()
 
@@ -598,10 +603,10 @@ var/list/sacrificed = list()
 				usr.whisper("[input]")
 			for(var/datum/mind/H in ticker.mode.cult)
 				if (H.current)
-					H.current << "<span class='telepath'> \b [input] </span>"
+					H.current << "<span class='telepath'>\b \i [input] </span>"
 			for(var/datum/mind/H in ticker.mode.support)		//now shades can hear messages without messing other stuff.
 				if (H.current)
-					H.current << "<span class='telepath'> \b [input] </span>"
+					H.current << "<span class='telepath'>\b \i [input] </span>"
 			return 1
 
 /////////////////////////////////////////FIFTEENTH RUNE
@@ -805,7 +810,7 @@ var/list/sacrificed = list()
 					W.charges = 1
 					W.max_charges = 4
 				if("wandpolymorph")
-					W = new /obj/item/weapon/gun/magic/wand/polymorph/cult(get_turf(src))
+					W = new /obj/item/weapon/gun/magic/wand/reincarnate(get_turf(src))
 					W.charges = 4
 				if("wandteleport")
 					new /obj/item/weapon/gun/magic/wand/teleport(get_turf(src))
@@ -940,7 +945,7 @@ var/list/sacrificed = list()
 			for(var/mob/living/carbon/C in orange(1,src))
 				if(iscultist(C) && !C.stat)
 					users+=C
-			if(users.len>=1)
+			if(users.len>=2)
 				var/mob/living/carbon/cultist = input("Choose the one who you want to free", "Followers of Geometer") as null|anything in (cultists - users)
 				if(!cultist)
 					return fizzle()

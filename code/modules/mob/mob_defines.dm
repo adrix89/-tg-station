@@ -93,6 +93,7 @@
 	var/obj/item/r_hand = null//Living
 	var/obj/item/weapon/storage/s_active = null//Carbon
 
+	var/see_override = 0	//When life gives you lemons OVERRIDE THAT SHIT
 	var/seer = 0 //for cult//Carbon, probably Human
 
 	var/datum/hud/hud_used = null

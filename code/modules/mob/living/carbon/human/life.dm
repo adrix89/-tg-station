@@ -1033,14 +1033,6 @@
 				see_in_dark = 8
 				if(!druggy)		see_invisible = SEE_INVISIBLE_LEVEL_TWO
 
-			if(seer)
-				var/obj/effect/rune/R = locate() in loc
-				if(R && R.word1 == wordsee && R.word2 == wordhell && R.word3 == wordjoin)
-					see_invisible = SEE_INVISIBLE_OBSERVER
-				else
-					see_invisible = SEE_INVISIBLE_LIVING
-					seer = 0
-
 			if(mind && mind.changeling)
 				hud_used.lingchemdisplay.invisibility = 0
 				hud_used.lingchemdisplay.maptext = "<div align='center' valign='middle' style='position:relative; top:0px; left:6px'> <font color='#dd66dd'>[src.mind.changeling.chem_charges]</font></div>"
@@ -1067,6 +1059,8 @@
 					if(3)
 						sight |= SEE_TURFS
 						if(!druggy)		see_invisible = SEE_INVISIBLE_LIVING
+			if(seer)
+				see_invisible = SEE_INVISIBLE_OBSERVER
 
 			if(glasses)
 				if(istype(glasses, /obj/item/clothing/glasses/meson))
@@ -1103,7 +1097,7 @@
 						see_invisible = SEE_INVISIBLE_LIVING
 				else
 					see_invisible = SEE_INVISIBLE_LIVING
-
+					
 			if(healths)
 				switch(hal_screwyhud)
 					if(1)	healths.icon_state = "health6"

@@ -19,7 +19,10 @@
 				if("armor")
 					call(/obj/effect/rune/proc/armor)()
 				if("emp")
-					call(/obj/effect/rune/proc/emp)(usr.loc,3)
+					if(uses < 3)
+						return
+					call(/obj/effect/rune/proc/emp)(usr.loc,4)
+					uses = 0
 				if("conceal")
 					call(/obj/effect/rune/proc/obscure)(2)
 				if("revealrunes")
@@ -41,26 +44,69 @@
 //			user.take_organ_damage(5, 0)
 			if(src && src.imbue!="supply" && src.imbue!="runestun")
 				if(delete)
-					user.drop_item(src)
-					del(src)
+					uses--
+					if(uses <= 0)
+						user.drop_item(src)
+						del(src)
 			return
 		else
 			user << "You see strange symbols on the paper. Are they supposed to mean something?"
 			return
 
 
-	attack(mob/living/carbon/T as mob, mob/living/user as mob)
+	attack(mob/living/T as mob, mob/living/user as mob)
 		if(iscultist(user))
 			if(imbue == "runestun")
 				user.take_organ_damage(5, 0)
 				call(/obj/effect/rune/proc/runestun)(T)
 				user.drop_item(src)
 				del(src)
+			else if(imbue == "emp")
+				if(isrobot(T))
+					T.emp_act(1)
+					T.take_organ_damage(30)	//emp act + this = 50 damage total
+					uses--
+				if(uses <=0)
+					user.drop_item(src)
+					del(src)
 			else
 				..()   ///If its some other talisman, use the generic attack code, is this supposed to work this way?
 		else
 			..()
-
+			
+	preattack(atom/O as obj|mob, mob/living/user as mob, proximity_flag)
+		. = 1	//Return 1 on delete
+		if(isturf(O))
+			return 0
+		if(proximity_flag)
+			if(iscultist(user) && imbue == "emp")
+				if(istype(O, /obj/machinery/camera))
+					var/obj/machinery/camera/cam = O
+					cam.deactivate(user,2)
+					cam.visible_message("\blue The camera has blown up!")
+					del(cam)
+				if(istype(O, /obj/machinery/bot))
+					var/obj/machinery/bot/bot = O
+					bot.explode()
+				if(istype(O, /obj/machinery/power/apc) && uses==3)
+					var/obj/machinery/power/apc/apc = O
+					apc.emp_act(1)
+					apc.set_broken()
+					apc.visible_message("\blue The apc has blown up!")
+					user.drop_item(src)
+					uses = 0
+				else 
+					O.emp_act(1)	//emp the rest
+				var/datum/effect/effect/system/spark_spread/spark_system = new /datum/effect/effect/system/spark_spread()
+				spark_system.set_up(5, 0, O.loc)
+				spark_system.start()
+				playsound(O.loc, "sparks", 50, 1)
+				uses--
+				if(uses <=0)
+					user.drop_item(src)
+					del(src)
+				return 1
+		return 0
 
 	proc/supply(var/key)
 		if (!src.uses)
@@ -72,10 +118,10 @@
 		dat += "<HR>"
 		dat += "<A href='?src=\ref[src];rune=newtome'>N'ath reth sh'yro eth d'raggathnor!</A> - Summon a new arcane tome.<BR>"
 		dat += "<A href='?src=\ref[src];rune=teleport'>Sas'so c'arta forbici!</A> - Allows you to move to a rune with the same last word.<BR>"
-		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology in a short range.<BR>"
+		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology. (charge 3)<BR>"
 		dat += "<A href='?src=\ref[src];rune=conceal'>Kla'atu barada nikt'o!</A> - Allows you to conceal the runes you placed on the floor.<BR>"
 		dat += "<A href='?src=\ref[src];rune=reveal'>Nikt'o barada kla'atu!</A> - Allows you to reveal the runes in a short range.<BR>"
-		dat += "<A href='?src=\ref[src];rune=communicate'>O bidai nabora se'sma!</A> - Allows you to coordinate with others of your cult.<BR>"
+		dat += "<A href='?src=\ref[src];rune=communicate'>O bidai nabora se'sma!</A> - Allows you to coordinate with others of your cult. (3 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=runestun'>Fuu ma'jin</A> - Allows you to stun a person by attacking them with the talisman.<BR>"
 		dat += "<A href='?src=\ref[src];rune=armor'>Sa tatha najin</A> - Allows you to summon armoured robes and an unholy blade<BR>"
 		dat += "<A href='?src=\ref[src];rune=construct'>Da A'ig Osk</A> - Summons a construct shell for use with captured souls. It is too large to carry on your person.<BR>"
@@ -92,14 +138,18 @@
 				if("newtome")
 					usr.put_in_hands(new /obj/item/weapon/tome(usr.loc))
 				if("teleport")
+					var/dest = input ("Choose a destination word") in list("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
+					if(!dest)
+						return
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
-					T.imbue = "[pick("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri", "orkan", "allaq")]"
+					T.imbue = dest
 					T.info = "[T.imbue]"
 				if("emp")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "emp"
+					T.uses = 3
 				if("conceal")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
@@ -112,6 +162,7 @@
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "communicate"
+					T.uses = 3
 				if("runestun")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)

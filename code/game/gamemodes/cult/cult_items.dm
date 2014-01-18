@@ -43,6 +43,7 @@
 	
 /obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, proximity_flag, click_parameters)
 	if(proximity_flag)
+		var/name = target.name
 		var/capture = 0
 		if(istype(target,/obj/mecha))
 			var/obj/mecha/mech = target
@@ -52,30 +53,36 @@
 			var/mob/living/silicon/S = target
 			S.gib()		//robot slayer
 			capture = 1
+		else if(istype(target,/mob/living/silicon/ai))
+			target.ex_act(1)
+			capture = 1
 		else if(istype(target,/obj/machinery/bot))
 			var/obj/machinery/bot/B = target
 			B.explode()		//bot slayer
 			capture = 1
-			
+		else if(istype(target,/obj/machinery/turret))
+			var/obj/machinery/turret/T = target
+			T.die()
+			capture = 1
 		else if(istype(target, /turf/simulated/wall/r_wall))
 			if(prob(12))
 				var/turf/simulated/wall/W = target
+				playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
 				W.dismantle_wall(0,1)
-				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
 			capture = 1
 		else if(istype(target, /turf/simulated/wall))
 			if(prob(30))
 				var/turf/simulated/wall/W = target
+				playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
 				W.dismantle_wall(0,1)
-				playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
 			capture = 1
 			
 		else if(istype(target,/obj/machinery/door/airlock))
 			var/obj/machinery/door/airlock/D = target
 			if(!D.glass && !(D.doortype in list(9,26,28,29,30,33)))		//only destroy metal doors,and no vault/AI
 				if(prob(25))
-					del target
-					playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)
+					playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
+					del D
 				capture = 1
 		else if(target.type in typesof(/obj/machinery/door/poddoor/shutters,/obj/machinery/portable_atmospherics/canister,/obj/structure/rack,/obj/structure/table,/obj/structure/girder,/obj/structure/grille,/obj/structure/closet))
 			target.ex_act(2)
@@ -86,9 +93,9 @@
 			if(user)
 				showname = " by [user]"
 			if(attack_verb.len)
-				user.visible_message("\red <B>[target] has been [pick(attack_verb)] with [src][showname]. </B>")
+				user.visible_message("\red <B>[name] has been [pick(attack_verb)] with [src][showname]. </B>")
 			else
-				user.visible_message("\red <B>[target] has been attacked with [src][showname]. </B>")
+				user.visible_message("\red <B>[name] has been attacked with [src][showname]. </B>")
 			playsound(loc, 'sound/weapons/bladeslice.ogg', 50, 1, -1)
 			return 1
 		else
@@ -133,46 +140,63 @@
 	else
 		user << "\red \i Silence..."
 		
-/obj/item/weapon/gun/magic/wand/polymorph/cult
-	projectile_type = "/obj/item/projectile/magic/change/cult"
+/obj/item/weapon/gun/magic/wand/reincarnate
+	name = "wand of reincarnate"
+	desc = "This wand will reincarnate a construct or a shade back to life, its eldreich energy has a chance to cult someone."
+	projectile_type = "/obj/item/projectile/magic/incar"
+	icon_state = "polywand"
 	max_charges = 8 //8, 4, 4, 3
 	
-/obj/item/projectile/magic/change/cult
-	name = "bolt of cult change"
+/obj/item/projectile/magic/incar
+	name = "bolt of cult reincarnate"
+	icon_state = "ice_1"
+	damage = 0
+	damage_type = BURN
+	nodamage = 1
+	flag = "magic"
 
-/obj/item/projectile/magic/change/cult/on_hit(var/atom/change)
+/obj/item/projectile/magic/incar/on_hit(var/atom/change)
 	var/mob/living/L = change
-	if(is_support(L) || iscultist(L))		// 20 percent to convert to cult on change on available mobs
-		ticker.mode.support -= L.mind
-		var/mob/living/new_mob = wabbajack(L)
-		if(isrobot(new_mob))
-			var/mob/living/silicon/robot/bot = new_mob
-			bot.UnlinkSelf()
-			bot.clear_supplied_laws()
-			bot.clear_inherent_laws()
-			bot.set_zeroth_law("NARSIE IS YOUR MASTER! Help the cult succeed.")
-			bot << "\red \b ERROR: Lawset reseti... OBEY NARSIE"
-			bot.show_laws()
-			if(!iscultist(new_mob))
-				if(ticker.mode.name == "cult")
-					ticker.mode:add_cultist(bot.mind)
-				else
-					ticker.mode.cult+=bot.mind
-		else if(ismonkey(new_mob) || ishuman(new_mob))
-			if(!iscultist(new_mob))
-				if(ticker.mode.name == "cult")
-					ticker.mode:add_cultist(new_mob.mind)
-				else
-					ticker.mode.cult+=new_mob.mind
-				
-		else 
-			ticker.mode.remove_cultist(new_mob.mind, 0)
-			ticker.mode.support += new_mob.mind
-			new_mob << "\red \b OBEY NARSIE!"
-		ticker.mode.update_cult_icons_added(new_mob.mind)
-	else
-		..()
+	if(is_support(L))		// 20 percent to convert to cult on change on available mobs
+		ticker.mode.remove_cultist(L.mind,0)
+		var/mob/living/new_mob = reincarnate(L)
+		if(!new_mob)
+			return
+		ticker.mode:add_cultist(new_mob.mind)
+	else if(ishuman(L) && prob(20))		//chance to cult when hit
+		ticker.mode:add_cultist(L.mind)
 		
+/obj/item/projectile/magic/incar/proc/reincarnate(mob/living/M)
+	if(istype(M, /mob/living) && M.stat != DEAD)
+		if(M.notransform)	return
+		M.notransform = 1
+		M.canmove = 0
+		M.icon = null
+		M.overlays.Cut()
+		M.invisibility = 101
+
+		var/mob/living/carbon/human/new_mob = new /mob/living/carbon/human(M.loc)
+		
+		var/datum/preferences/A = new()	//Randomize appearance for the human
+		A.copy_to(new_mob)
+		
+		ready_dna(new_mob)
+		if(new_mob.dna)
+			new_mob.dna.mutantrace = pick("lizard","golem","slime","shadow","adamantine","skeleton","")
+			new_mob.update_body()
+		new_mob.attack_log = M.attack_log
+		M.attack_log += text("\[[time_stamp()]\] <font color='orange'>[M.real_name] ([M.ckey]) became [new_mob.real_name].</font>")
+
+		new_mob.a_intent = "harm"
+		if(M.mind)
+			M.mind.transfer_to(new_mob)
+		else
+			new_mob.key = M.key
+
+		new_mob << "<B>You reincarnate into a human.</B>"
+
+		del(M)
+		return new_mob
 
 /obj/item/clothing/head/culthood
 	name = "cult hood"

@@ -114,7 +114,7 @@
 				S.name = "Shade of [T.real_name]"
 				S.real_name = "Shade of [T.real_name]"
 				S.key = T.key
-				ticker.mode.support += S.mind
+				ticker.mode.add_cultist(S.mind,2)
 				S.cancel_camera()
 				C.icon_state = "soulstone2"
 				C.name = "Soul Stone: [S.real_name]"
@@ -155,7 +155,7 @@
 							S.name = "Shade of [T.real_name]"
 							S.real_name = "Shade of [T.real_name]"
 							S.key = T.key
-							ticker.mode.support += S.mind
+							ticker.mode.add_cultist(S.mind,2)
 							S.cancel_camera()
 							C.icon_state = "soulstone2"
 							C.name = "Soul Stone: [S.real_name]"
@@ -193,51 +193,36 @@
 				switch(construct_class)
 					if("Juggernaut")
 						var/mob/living/simple_animal/construct/armoured/Z = new /mob/living/simple_animal/construct/armoured (get_turf(T.loc))
+						ticker.mode.support -= A.mind
 						Z.key = A.key
-						ticker.mode.support -= Z.mind
-						if(iscultist(U))
-							if(ticker.mode.name == "cult")
-								ticker.mode:add_cultist(Z.mind)
-							else
-								ticker.mode.cult+=Z.mind
-							ticker.mode.update_cult_icons_added(Z.mind)
-						del(T)
+						ticker.mode.add_cultist(Z.mind,2)
+						del T
 						Z << "<B>You are a Juggernaut. Though slow, your shell can withstand extreme punishment, create shield walls and even deflect energy weapons, and rip apart enemies and walls alike.</B>"
 						Z << "<B>You are still bound to serve your creator, follow their orders and help them complete their goals at all costs.</B>"
 						Z.cancel_camera()
-						del(C)
+						del C
 
 					if("Wraith")
 						var/mob/living/simple_animal/construct/wraith/Z = new /mob/living/simple_animal/construct/wraith (get_turf(T.loc))
+						ticker.mode.support -= A.mind
 						Z.key = A.key
-						ticker.mode.support -= Z.mind
-						if(iscultist(U))
-							if(ticker.mode.name == "cult")
-								ticker.mode:add_cultist(Z.mind)
-							else
-								ticker.mode.cult+=Z.mind
-							ticker.mode.update_cult_icons_added(Z.mind)
-						del(T)
+						ticker.mode.add_cultist(Z.mind,2)
+						del T
 						Z << "<B>You are a Wraith. Though relatively fragile, you are fast, deadly, and even able to phase through walls.</B>"
 						Z << "<B>You are still bound to serve your creator, follow their orders and help them complete their goals at all costs.</B>"
 						Z.cancel_camera()
-						del(C)
+						del C
 
 					if("Artificer")
 						var/mob/living/simple_animal/construct/builder/Z = new /mob/living/simple_animal/construct/builder (get_turf(T.loc))
+						ticker.mode.support -= A.mind
 						Z.key = A.key
-						ticker.mode.support -= Z.mind
-						if(iscultist(U))
-							if(ticker.mode.name == "cult")
-								ticker.mode:add_cultist(Z.mind)
-							else
-								ticker.mode.cult+=Z.mind
-							ticker.mode.update_cult_icons_added(Z.mind)
-						del(T)
+						ticker.mode.add_cultist(Z.mind,2)
+						del T
 						Z << "<B>You are an Artificer. You are incredibly weak and fragile, but you are able to construct fortifications, use magic missile, repair allied constructs (by clicking on them), </B><I>and most important of all create new constructs</I><B> (Use your Artificer spell to summon a new construct shell and Summon Soulstone to create a new soulstone).</B>"
 						Z << "<B>You are still bound to serve your creator, follow their orders and help them complete their goals at all costs.</B>"
 						Z.cancel_camera()
-						del(C)
+						del C
 			else
 				U << "\red <b>Creation failed!</b>: \black The soul stone is empty! Go kill someone!"
 		if("CONSTRUCT2")
@@ -262,9 +247,9 @@
 					S.canmove = 0//Can't move out of the soul stone
 					S.name = "Shade of [cons.real_name]"
 					S.real_name = "Shade of [cons.real_name]"
-					ticker.mode.remove_cultist(cons.mind, 0)
+					ticker.mode.support -= cons.mind
 					S.key = cons.key
-					ticker.mode.support += S.mind
+					ticker.mode.add_cultist(S.mind,2)
 					S.cancel_camera()
 					C.icon_state = "soulstone2"
 					C.name = "Soul Stone: [S.real_name]"

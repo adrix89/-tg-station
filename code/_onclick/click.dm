@@ -79,7 +79,14 @@
 		return
 
 	var/obj/item/W = get_active_hand()
-
+	
+	if(W)
+		var/temp =0
+		if(W.flags&USEDELAY)
+			temp = 5
+		if(W.preattack(A,src,A.Adjacent(src),params))	//Weapon attack override,return 1 to exit
+			next_move = world.time + 10 + temp			//Add delay and exit,if we are not exiting we generally don't want delay
+			return
 	
 	if(W == A)
 		next_move = world.time + 6
@@ -125,8 +132,7 @@
 			if(W)
 				if(W.flags&USEDELAY)
 					next_move += 5
-				if(W.preattack(A,src,1,params))	//Weapon attack override,return 1 to exit
-					return
+				
 				// Return 1 in attackby() to prevent afterattack() effects (when safely moving items for example)
 				var/resolved = A.attackby(W,src)
 				if(!resolved && A && W)
@@ -136,8 +142,6 @@
 			return
 		else // non-adjacent click
 			if(W)
-				if(W.preattack(A,src,0,params))	//Weapon attack override,return 1 to exit
-					return
 				W.afterattack(A,src,0,params) // 0: not Adjacent
 			else
 				RangedAttack(A, params)

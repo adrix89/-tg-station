@@ -48,7 +48,7 @@
 
 	var/eldergod = 1 //for the summon god objective
 
-	var/const/acolytes_needed = 5 //for the survive objective
+	var/acolytes_needed = 5 //for the survive objective
 	var/acolytes_survived = 0
 
 
@@ -58,7 +58,10 @@
 
 
 /datum/game_mode/cult/pre_setup()
-	if(required_players >= 2 && prob(40))
+	if(required_players >= 35)		//Do some scaling
+		acolytes_needed = 8
+		recommended_enemies = 5
+	if(required_players >= 25 && prob(40))
 		objectives += "eldergod"
 		objectives += "sacrifice"
 	else
@@ -121,7 +124,7 @@
 
 
 /datum/game_mode/cult/proc/memorize_cult_objectives(var/datum/mind/cult_mind)
-	var/note ={"<font size='2' color=#330099>Note from adrix89:<BR>The cult gamemode has had a bit of a redesign and information is not yet available on the wiki so I am here to give you some starter tips:<BR>Cult now is intended to be played as a team, you need 3 cultists to use sacrifice or convert runes, so get together and plan ahead.<BR>You can find other cultists by just looking around the station or setting up a meeting place with the communication talisman.<BR>You can solo if you utilize your armor talisman it's still a good idea to have at least one cultist around to lure people stealthily.<BR>Sacrificed players now become soulstones, shades can now use teleport,teleport other,emp,seer,hide,reveal,wall,silence,blind,stun and communicate runes.<BR>It is important to prepare whatever runes you can as fast as you get them, if you get caught always have a means to escape.<BR><BR>This mode is on trial,suggestions,complains and feedback can be given http://www.ss13.eu/phpbb/viewtopic.php?f=5&t=2688 , if you don't like it, it will be removed, so don't worry and just give it your best shot.</font>"}
+	var/note ={"<font size='2' color=#000099>Note from adrix89:<BR>The cult gamemode has had a bit of a redesign and information is not yet available on the wiki so I am here to give you some starter tips:<BR>Cult now is intended to be played as a team, you need 3 cultists to use sacrifice or convert runes, so get together and plan ahead.<BR>You can find other cultists by just looking around the station or setting up a meeting place with the communication talisman.<BR>You can solo if you utilize your armor talisman it's still a good idea to have at least one cultist around to lure people stealthily.<BR>Sacrificed players now become soulstones, shades can now use teleport,teleport other,emp,seer,hide,reveal,wall,silence,blind,stun and communicate runes.<BR>It is important to prepare whatever runes you can as fast as you get them, if you get caught always have a means to escape.<BR><BR>This mode is on trial,suggestions,complains and feedback can be given http://www.ss13.eu/phpbb/viewtopic.php?f=5&t=2688 , if you don't like it, it will be removed, so don't worry and just give it your best shot.</font>"}
 	cult_mind.memory += note
 	cult_mind.memory += "<HR><BR>"
 	for(var/obj_count = 1,obj_count <= objectives.len,obj_count++)
@@ -239,19 +242,23 @@
 		grant_runeword(cultist,word,trans)
 
 
-/datum/game_mode/proc/add_cultist(datum/mind/cult_mind) //BASE
+/datum/game_mode/proc/add_cultist(datum/mind/cult_mind,type = 1) //BASE type 1 cult type 2 support
 	if (!istype(cult_mind))
 		return 0
-	if(!(cult_mind in cult) && is_convertable_to_cult(cult_mind))
+	if(type == 1 && !(cult_mind in cult) && is_convertable_to_cult(cult_mind))
 		cult += cult_mind
 		learn_words(cult_mind.current,1)
 		update_cult_icons_added(cult_mind)
 		cult_mind.current.attack_log += "\[[time_stamp()]\] <font color='red'>Has been converted to the cult!</font>"
 		return 1
+	else if(type == 2 && !(cult_mind in support))
+		support += cult_mind
+		update_cult_icons_added(cult_mind)
+		cult_mind.current.attack_log += "\[[time_stamp()]\] <font color='red'>Has been added as cult support!</font>"
+		return 1
 
-
-/datum/game_mode/cult/add_cultist(datum/mind/cult_mind) //INHERIT
-	if (!..(cult_mind))
+/datum/game_mode/cult/add_cultist(datum/mind/cult_mind,type = 1) //INHERIT
+	if (!..(cult_mind,type))
 		return
 	memorize_cult_objectives(cult_mind)
 
@@ -261,13 +268,20 @@
 		cult -= cult_mind
 		if(show_message)
 			cult_mind.current << "\red <FONT size = 3><B>An unfamiliar white light flashes through your mind, cleansing the taint of the dark-one and the memories of your time as his servant with it.</B></FONT>"
+			for(var/mob/M in viewers(cult_mind.current))
+				M << "<FONT size = 3>[cult_mind.current] looks like they just reverted to their old faith!</FONT>"
 		cult_mind.memory = ""
 		cult_mind.cult_words = list()
 		update_cult_icons_removed(cult_mind)
 		cult_mind.current.attack_log += "\[[time_stamp()]\] <font color='red'>Has renounced the cult!</font>"
+			
+	if(cult_mind in support)
+		support -= cult_mind
 		if(show_message)
-			for(var/mob/M in viewers(cult_mind.current))
-				M << "<FONT size = 3>[cult_mind.current] looks like they just reverted to their old faith!</FONT>"
+			cult_mind.current << "\red <FONT size = 3><B>An unfamiliar white light flashes through your mind, cleansing the taint of the dark-one and the memories of your time as his servant with it.</B></FONT>"
+		cult_mind.memory = ""
+		update_cult_icons_removed(cult_mind)
+		cult_mind.current.attack_log += "\[[time_stamp()]\] <font color='red'>Has renounced the cult!</font>"
 
 /datum/game_mode/proc/update_all_cult_icons()
 	spawn(0)
