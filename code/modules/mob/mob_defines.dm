@@ -95,6 +95,7 @@
 
 	var/see_override = 0	//When life gives you lemons OVERRIDE THAT SHIT
 	var/seer = 0 //for cult//Carbon, probably Human
+	var/see_override = 0 //0 for no override, sets see_invisible = see_override in mob life process
 
 	var/datum/hud/hud_used = null
 

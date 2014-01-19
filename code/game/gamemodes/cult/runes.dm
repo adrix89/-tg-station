@@ -264,20 +264,20 @@ var/list/sacrificed = list()
 /////////////////////////////////////////SEVENTH RUNE
 
 		seer()
-			var/mob/living/carbon/human/user = usr
-			if(user.loc==src.loc)
-				user.say("Rash'tla sektath mal[pick("'","`")]zua. Zasan therium vivira. Itonis al'ra matum!")
-				if(user.see_invisible == 25 && !user.glasses)
-					user << "<span class='telepath'> The world beyond opens to your eyes.</span>"
+			if(usr.loc==src.loc)
+				usr.say("Rash'tla sektath mal[pick("'","`")]zua. Zasan therium vivira. Itonis al'ra matum!")
+				var/mob/living/carbon/human/user = usr
+				if(user.see_invisible!=25  || (istype(user) && user.glasses))	//check for non humans
+					user << "\red The world beyond flashes your eyes but disappears quickly, as if something is disrupting your vision."
 				else
-					user << "<span class='telepath'> The world beyond flashes your eyes but disappears quickly, as if something is disrupting your vision.</span>"
-				var/temp_see = user.see_invisible
+					user << "\red The world beyond opens to your eyes."
+				var/see_temp = user.see_invisible
 				user.see_invisible = SEE_INVISIBLE_OBSERVER
 				user.seer = 1
-				while(user.loc==src.loc)		//because life sucks
-					sleep(50)
+				while(user.loc==src.loc)
+					sleep(30)
 				user.seer = 0
-				user.see_invisible = temp_see
+				user.see_invisible = see_temp
 				return
 			return fizzle()
 
