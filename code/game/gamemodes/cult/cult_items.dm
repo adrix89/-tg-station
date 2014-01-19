@@ -143,9 +143,12 @@
 /obj/item/weapon/gun/magic/wand/reincarnate
 	name = "wand of reincarnate"
 	desc = "This wand will reincarnate a construct or a shade back to life, its eldreich energy has a chance to cult someone."
-	projectile_type = "/obj/item/projectile/magic/incar"
+	ammo_type = "/obj/item/ammo_casing/magic/incar"
 	icon_state = "polywand"
 	max_charges = 8 //8, 4, 4, 3
+	
+/obj/item/ammo_casing/magic/incar
+	projectile_type = /obj/item/projectile/magic/incar
 	
 /obj/item/projectile/magic/incar
 	name = "bolt of cult reincarnate"
@@ -166,7 +169,7 @@
 	else if(ishuman(L) && prob(20))		//chance to cult when hit
 		ticker.mode:add_cultist(L.mind)
 		
-/obj/item/projectile/magic/incar/proc/reincarnate(mob/living/M)
+/obj/item/projectile/magic/proc/reincarnate(mob/living/M)
 	if(istype(M, /mob/living) && M.stat != DEAD)
 		if(M.notransform)	return
 		M.notransform = 1
