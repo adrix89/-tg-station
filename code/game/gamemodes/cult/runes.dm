@@ -1274,55 +1274,58 @@ var/list/sacrificed = list()
 				drained = usr	//swap users
 				return
 			var/obj/effect/rune/this_rune = src
-			var/area/area = get_area_master(src)
-			src = null
-			if(area.type == /area)		//space
+			var/area/A = get_area_master(this_rune)
+			//src = null
+			if(A.type == /area)		//space
 				usr << "\red \i You can't use the shadow rune in space."
 				return
-			if(area.type in typesof(/area/chapel,/area/hallway,/area/shuttle,/area/centcom,/area/asteroid,/area/tdome,/area/planet,/area/telesciareas))
+			if(A.type in typesof(/area/chapel,/area/hallway,/area/shuttle,/area/centcom,/area/asteroid,/area/tdome,/area/planet,/area/telesciareas))
 				usr << "\red \i The shadow rune cannot work here."
 				return
 			var/count
-			for(var/area/LSA in area.related)
+			for(var/area/LSA in A.related)
 				for(var/turf/T in LSA)
 					count++
-			world << "Area size: [count]"
+			usr << "Area size: [count]"
 			if(count <= 300)
-				area.shadow = 1
+				A.shadow = 1
 				active = 1
-				var/damage = round(count/100,0.5)
+				var/damage = round(count/100,1)
 				drained = usr
-				for(var/mob/search as obj|mob in area_contents(area))
+				for(var/mob/search as obj|mob in area_contents(A))
 					if(search.type in typesof(/obj/effect/rune,/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
-						search.invisibility =55
-					if(ishuman(search))
-						search.invisibility =55
-						search.see_override =55
-					if(ismob(search))
-						search.invisibility =55
-						search.see_invisible =55
+						search.invisibility = 55
+					if(isliving(search))
+						search.invisibility = 55
+						search.see_invisible = 55
+						search.see_override = 55
 						
 				while(1)
-					if(this_rune && drained && drained.stat==CONSCIOUS && drained.client && drained.lastarea.master==area)
+					if(this_rune && drained && drained.stat==CONSCIOUS && drained.client && drained.lastarea.master==A)
 						drained.take_organ_damage(damage, 0)
+						drained << "DAMGED [damage]"
 					else
-						for(var/mob/M in area)	//find user
-							if(iscultist(M) && !M.stat)
+						var/check =0
+						for(var/mob/M as mob in area_contents(A))	//find user
+							if(iscultist(M) && M.stat==CONSCIOUS && drained.client)
 								drained = M
 								drained.take_organ_damage(damage, 0)
+								check =1
+								drained << "FOUND "
 								break
-							else
-								area.shadow = 0
-								active = 0
-								for(var/mob/search as obj|mob in area_contents(area))
-									if(search.type in typesof(/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
-										search.invisibility =0
-									if(ishuman(search))
-										search.invisibility =0
-									if(ismob(search))
-										search.invisibility =0
-										search.see_invisible =	initial(search.see_invisible)
-								return
+							drained <<"NOT FOUND "
+						if(!check)
+							A.shadow = 0
+							active = 0
+							for(var/mob/search as obj|mob in area_contents(A))
+								if(search.type in typesof(/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
+									search.invisibility =0
+								if(isliving(search))
+									search.invisibility = initial(search.invisibility)
+									search.see_override = 0
+									search.see_invisible =	initial(search.see_invisible)
+							del(src)
+							return
 					sleep(100)
 				return
 			else

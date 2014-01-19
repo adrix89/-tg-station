@@ -255,7 +255,15 @@
 		if(ENVIRON)
 			master.used_environ += amount
 
-
+/area/Exited(A)
+	if(src.master.shadow)
+		if(isliving(A))
+			var/mob/living/L = A
+			L.invisibility =initial(L.invisibility)
+			L.see_override = 0
+			L.see_invisible =initial(L.see_invisible)
+	
+	
 /area/Entered(A)
 	var/musVolume = 25
 	var/sound = 'sound/ambience/ambigen1.ogg'
@@ -263,6 +271,10 @@
 	if(!istype(A,/mob/living))	return
 
 	var/mob/living/L = A
+	if(src.master.shadow)
+		L.invisibility = 55
+		L.see_override = 55
+		L.see_invisible = 55
 	if(!L.ckey)	return
 
 	if(!L.lastarea)
@@ -273,6 +285,7 @@
 		thunk(L)
 
 	L.lastarea = newarea
+	
 
 	// Ambience goes down here -- make sure to list each area seperately for ease of adding things in later, thanks! Note: areas adjacent to each other should have the same sounds to prevent cutoff when possible.- LastyScratch
 	if(!(L && L.client && (L.client.prefs.toggles & SOUND_AMBIENCE)))	return

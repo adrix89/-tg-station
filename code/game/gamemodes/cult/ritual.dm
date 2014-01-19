@@ -197,6 +197,8 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			return itemport(src.word3)
 		if(word1 == wordjoin && word2 == wordhide && word3 == wordtech)
 			return runestun()
+		if(word1 == wordhide && word2 == wordsee && word3 == wordtech)
+			return shadow()
 		user.take_overall_damage(20, 0)
 		user << "<span class='danger'>You feel the life draining from you, as if Lord Nar-Sie is displeased with you. Better not mess with it again.</span>"
 		return fizzle()
@@ -327,6 +329,10 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			if(word1 == wordjoin && word2 == wordhide && word3 == wordtech)
 				icon_state = "2"
 				src.icon += rgb(100, 0, 100)
+				return
+			if(word1 == wordhide && word2 == wordsee && word3 == wordtech)
+				icon_state = "4"
+				src.icon += rgb(0, 0, 0)
 				return
 			if(word1 == wordhell && word2 == worddestr && word3 == wordother)
 				icon_state="[rand(1,6)]" //random shape and color for dummy runes
@@ -698,7 +704,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			var/r
 			if (!istype(user.loc,/turf))
 				user << "\red You do not have enough space to write a proper rune."
-			var/list/runes = list("teleport", "itemport", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "obscure", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "silence", "blind", "bloodboil", "communicate", "stun")
+			var/list/runes = list("teleport", "itemport", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "obscure", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "silence", "blind", "bloodboil", "communicate", "stun", "shadow")
 			r = input("Choose a rune to scribe", "Rune Scribing") in runes //not cancellable.
 			var/obj/effect/rune/R = new /obj/effect/rune
 			if(istype(user, /mob/living/carbon/human))
@@ -849,6 +855,12 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				if("communicate")
 					R.word1=wordself
 					R.word2=wordother
+					R.word3=wordtech
+					R.loc = user.loc
+					R.check_icon()
+				if("shadow")
+					R.word1=wordhide
+					R.word2=wordsee
 					R.word3=wordtech
 					R.loc = user.loc
 					R.check_icon()
