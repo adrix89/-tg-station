@@ -1097,6 +1097,8 @@
 						see_invisible = SEE_INVISIBLE_LIVING
 				else
 					see_invisible = SEE_INVISIBLE_LIVING
+				if(see_override)
+					see_invisible = see_override
 					
 			if(healths)
 				switch(hal_screwyhud)

@@ -64,6 +64,8 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 	var/word1
 	var/word2
 	var/word3
+	var/active		//see if a rune is already active
+	var/mob/living/drained		//mob that is beeing drained
 // Places these combos are mentioned: this file - twice in the rune code, once in imbued tome, once in tome's HTML runes.dm - in the imbue rune code. If you change a combination - dont forget to change it everywhere.
 
 // travel self [word] - Teleport to random [rune with word destination matching]
@@ -593,6 +595,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				"free cultist" = list("travel","technology","other"),
 				"silence" = list("hide","other","see"),
 				"blind" = list("destroy","see","other"),
+				"shadow" = list("hide","see","technology"),
 				"stun" = list("join","hide","technology"),
 				"armor" = list("hell","destroy","other"),
 				"teleport" = list("travel","self"),

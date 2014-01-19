@@ -379,7 +379,7 @@ var/list/sacrificed = list()
 			var/S=0
 			for(var/obj/effect/rune/R in orange(rad,src))
 				if(R!=src)
-					R.invisibility=INVISIBILITY_OBSERVER
+					R.invisibility=55
 				S=1
 			if(S)
 				if(istype(src,/obj/effect/rune))
@@ -680,7 +680,7 @@ var/list/sacrificed = list()
 							usr << "\red The victim is still alive, you will need more cultists chanting for the sacrifice to succeed."
 						
 					else
-						if(prob(60))
+						if(prob(70))
 							usr << "<span class='telepath'> The Geometer of blood accepts this sacrifice. </span>"
 							sac_grant_word()
 						else
@@ -1060,6 +1060,8 @@ var/list/sacrificed = list()
 						if(!(iscultist(V)))
 							V.show_message("\red Dust flows from [usr]'s hands for a moment, and the world suddenly becomes quiet..", 3)
 			return
+			
+//////////             Rune 21
 
 		blind()
 			if(istype(src,/obj/effect/rune))
@@ -1102,6 +1104,7 @@ var/list/sacrificed = list()
 					usr << "\red Your talisman turns into gray dust, blinding those who not follow the Nar-Sie."
 			return
 
+//////////             Rune 22
 
 		bloodboil() //cultists need at least one DANGEROUS rune. Even if they're all stealthy.
 /*
@@ -1139,7 +1142,7 @@ var/list/sacrificed = list()
 				return fizzle()
 			return
 
-// WIP rune, I'll wait for Rastaf0 to add limited blood.
+//////////             Rune 23 WIP rune, I'll wait for Rastaf0 to add limited blood.
 
 		burningblood()
 			var/culcount = 0
@@ -1263,4 +1266,67 @@ var/list/sacrificed = list()
 
 			del(src)
 			return
+			
+//////////             Rune 26
+
+		shadow()
+			if(active)
+				drained = usr	//swap users
+				return
+			var/obj/effect/rune/this_rune = src
+			var/area/area = get_area_master(src)
+			src = null
+			if(area.type == /area)		//space
+				usr << "\red \i You can't use the shadow rune in space."
+				return
+			if(area.type in typesof(/area/chapel,/area/hallway,/area/shuttle,/area/centcom,/area/asteroid,/area/tdome,/area/planet,/area/telesciareas))
+				usr << "\red \i The shadow rune cannot work here."
+				return
+			var/count
+			for(var/area/LSA in area.related)
+				for(var/turf/T in LSA)
+					count++
+			world << "Area size: [count]"
+			if(count <= 300)
+				area.shadow = 1
+				active = 1
+				var/damage = round(count/100,0.5)
+				drained = usr
+				for(var/mob/search as obj|mob in area_contents(area))
+					if(search.type in typesof(/obj/effect/rune,/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
+						search.invisibility =55
+					if(ishuman(search))
+						search.invisibility =55
+						search.see_override =55
+					if(ismob(search))
+						search.invisibility =55
+						search.see_invisible =55
+						
+				while(1)
+					if(this_rune && drained && drained.stat==CONSCIOUS && drained.client && drained.lastarea.master==area)
+						drained.take_organ_damage(damage, 0)
+					else
+						for(var/mob/M in area)	//find user
+							if(iscultist(M) && !M.stat)
+								drained = M
+								drained.take_organ_damage(damage, 0)
+								break
+							else
+								area.shadow = 0
+								active = 0
+								for(var/mob/search as obj|mob in area_contents(area))
+									if(search.type in typesof(/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
+										search.invisibility =0
+									if(ishuman(search))
+										search.invisibility =0
+									if(ismob(search))
+										search.invisibility =0
+										search.see_invisible =	initial(search.see_invisible)
+								return
+					sleep(100)
+				return
+			else
+				usr << "\red \i The area is to expansive for the rune to work!"
+			return
+		
 
