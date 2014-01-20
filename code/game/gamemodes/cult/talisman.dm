@@ -19,9 +19,7 @@
 				if("armor")
 					call(/obj/effect/rune/proc/armor)()
 				if("emp")
-					if(uses < 3)
-						return
-					call(/obj/effect/rune/proc/emp)(usr.loc,4)
+					call(/obj/effect/rune/proc/emp)(usr.loc,1+uses)
 					uses = 0
 				if("conceal")
 					call(/obj/effect/rune/proc/obscure)(2)
@@ -82,13 +80,11 @@
 			if(iscultist(user) && imbue == "emp")
 				if(istype(O, /obj/machinery/camera))
 					var/obj/machinery/camera/cam = O
-					cam.deactivate(user,2)
-					cam.visible_message("\blue The camera has blown up!")
-					del(cam)
-				if(istype(O, /obj/machinery/bot))
+					cam.deactivate(null)
+				else if(istype(O, /obj/machinery/bot))
 					var/obj/machinery/bot/bot = O
 					bot.explode()
-				if(istype(O, /obj/machinery/power/apc) && uses==3)
+				else if(istype(O, /obj/machinery/power/apc) && uses==3)
 					var/obj/machinery/power/apc/apc = O
 					apc.emp_act(1)
 					apc.set_broken()
@@ -118,10 +114,10 @@
 		dat += "<HR>"
 		dat += "<A href='?src=\ref[src];rune=newtome'>N'ath reth sh'yro eth d'raggathnor!</A> - Summon a new arcane tome.<BR>"
 		dat += "<A href='?src=\ref[src];rune=teleport'>Sas'so c'arta forbici!</A> - Allows you to move to a rune with the same last word.<BR>"
-		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology. (charge 3)<BR>"
+		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology. (Charge 3)<BR>"
 		dat += "<A href='?src=\ref[src];rune=conceal'>Kla'atu barada nikt'o!</A> - Allows you to conceal the runes you placed on the floor.<BR>"
 		dat += "<A href='?src=\ref[src];rune=reveal'>Nikt'o barada kla'atu!</A> - Allows you to reveal the runes in a short range.<BR>"
-		dat += "<A href='?src=\ref[src];rune=communicate'>O bidai nabora se'sma!</A> - Allows you to coordinate with others of your cult. (3 uses)<BR>"
+		dat += "<A href='?src=\ref[src];rune=communicate'>O bidai nabora se'sma!</A> - Allows you to coordinate with others of your cult. (4 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=runestun'>Fuu ma'jin</A> - Allows you to stun a person by attacking them with the talisman.<BR>"
 		dat += "<A href='?src=\ref[src];rune=armor'>Sa tatha najin</A> - Allows you to summon armoured robes and an unholy blade<BR>"
 		dat += "<A href='?src=\ref[src];rune=construct'>Da A'ig Osk</A> - Summons a construct shell for use with captured souls. It is too large to carry on your person.<BR>"
@@ -162,7 +158,7 @@
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "communicate"
-					T.uses = 3
+					T.uses = 4
 				if("runestun")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)

@@ -1287,7 +1287,7 @@ var/list/sacrificed = list()
 				for(var/turf/T in LSA)
 					count++
 			usr << "Area size: [count]"
-			if(count <= 300)
+			if(count <= 200)
 				A.shadow = 1
 				active = 1
 				var/damage = round(count/100,1)
@@ -1326,7 +1326,7 @@ var/list/sacrificed = list()
 									search.see_invisible =	initial(search.see_invisible)
 							del(src)
 							return
-					sleep(100)
+					sleep(80)
 				return
 			else
 				usr << "\red \i The area is to expansive for the rune to work!"
