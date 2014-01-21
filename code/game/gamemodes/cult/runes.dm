@@ -9,7 +9,7 @@ var/list/sacrificed = list()
 			allrunesloc = new/list()
 			var/index = 0
 		//	var/tempnum = 0
-			for(var/obj/effect/rune/R in world)
+			for(var/obj/effect/rune/R in global.runes)
 				if(R == src)
 					continue
 				if(R.word1 == wordtravel && R.word2 == wordself && R.word3 == key && R.z != 2)
@@ -47,7 +47,7 @@ var/list/sacrificed = list()
 			var/runecount = 0
 			var/obj/effect/rune/IP = null
 			var/mob/living/user = usr
-			for(var/obj/effect/rune/R in world)
+			for(var/obj/effect/rune/R in global.runes)
 				if(R == src)
 					continue
 				if(R.word1 == wordtravel && R.word2 == wordother && R.word3 == key)
@@ -221,7 +221,7 @@ var/list/sacrificed = list()
 
 		drain()
 			var/drain = 0
-			for(var/obj/effect/rune/R in world)
+			for(var/obj/effect/rune/R in global.runes)
 				if(R.word1==wordtravel && R.word2==wordblood && R.word3==wordself)
 					for(var/mob/living/carbon/D in R.loc)
 						if(D.stat!=2)
@@ -305,7 +305,7 @@ var/list/sacrificed = list()
 
 			is_sacrifice_target = 0
 			find_sacrifice:
-				for(var/obj/effect/rune/R in world)
+				for(var/obj/effect/rune/R in global.runes)
 					if(R.word1==wordblood && R.word2==wordjoin && R.word3==wordhell)
 						for(var/mob/living/carbon/human/N in R.loc)
 							if(ticker.mode.name == "cult" && N.mind && N.mind == ticker.mode:sacrifice_target)
@@ -389,7 +389,7 @@ var/list/sacrificed = list()
 					del(src)
 				else
 					usr.whisper("Kla[pick("'","`")]atu barada nikt'o!")
-					usr << "\red Your talisman turns into gray dust, veiling the surrounding runes."
+					usr << "\red Part of the talisman turns into gray dust, veiling the surrounding runes."
 					for (var/mob/V in orange(1,src))
 						if(V!=usr)
 							V.show_message("\red Dust emanates from [usr]'s hands for a moment.", 3)
@@ -755,6 +755,7 @@ var/list/sacrificed = list()
 			var/obj/item/device/soulstone/stone = new /obj/item/device/soulstone(get_turf(src))
 			if(!stone.transfer_soul("FORCE", T, usr))	//if it fails to add soul
 				del stone
+			if(T)
 				if(isrobot(T))
 					T.dust()//To prevent the MMI from remaining
 				else
@@ -878,26 +879,14 @@ var/list/sacrificed = list()
 
 /////////////////////////////////////////SIXTEENTH RUNE
 
-		revealrunes(var/obj/W as obj)
-			var/go=0
-			var/rad
+		revealrunes(var/rad,var/obj/W as obj)
 			var/S=0
-			if(istype(W,/obj/effect/rune))
-				rad = 6
-				go = 1
-			if (istype(W,/obj/item/weapon/paper/talisman))
-				rad = 4
-				go = 1
-			if (istype(W,/obj/item/weapon/nullrod))
-				rad = 1
-				go = 1
-			if(go)
-				for(var/obj/effect/rune/R in orange(rad,src))
-					if(R!=src)
-						R.invisibility=0
-					S=1
+			for(var/obj/effect/rune/R in orange(rad,src))
+				if(R!=src)
+					R.invisibility=0
+				S=1
 			if(S)
-				if(istype(W,/obj/item/weapon/nullrod))
+				if(istype(W,/obj/item/weapon/nullrod) || istype(W,/obj/item/weapon/storage/bible))
 					usr << "\red Arcane markings suddenly glow from underneath a thin layer of dust!"
 					return
 				if(istype(W,/obj/effect/rune))
@@ -908,7 +897,7 @@ var/list/sacrificed = list()
 					return
 				if(istype(W,/obj/item/weapon/paper/talisman))
 					usr.whisper("Nikt[pick("'","`")]o barada kla'atu!")
-					usr << "\red Your talisman turns into red dust, revealing the surrounding runes."
+					usr << "\red Part of the talisman turns into red dust, revealing the surrounding runes."
 					for (var/mob/V in orange(1,usr.loc))
 						if(V!=usr)
 							V.show_message("\red Red dust emanates from [usr]'s hands for a moment.", 3)
@@ -1272,64 +1261,128 @@ var/list/sacrificed = list()
 		shadow()
 			if(active)
 				drained = usr	//swap users
+				usr << "\red \i The shadow rune recognizes you as its new master."
 				return
-			var/obj/effect/rune/this_rune = src
-			var/area/A = get_area_master(this_rune)
-			//src = null
+			var/area/A = get_area_master(src)
+			if(A.shadow)	//return if there is already a rune working
+				usr << "\red \i The area is already cloaked by another rune."
+				return
+			var/rune_count
+			for(var/obj/effect/rune/R in global.runes)
+				if(R.active)
+					rune_count++
+			if(rune_count > 3)
+				usr << "\red You feel pain, as the rune disappears in reality shift caused by too much wear of space-time fabric."
+				var/mob/living/user = usr
+				if (istype(user, /mob/living))
+					user.take_overall_damage(5, 0)
+				del(src)
 			if(A.type == /area)		//space
 				usr << "\red \i You can't use the shadow rune in space."
 				return
-			if(A.type in typesof(/area/chapel,/area/hallway,/area/shuttle,/area/centcom,/area/asteroid,/area/tdome,/area/planet,/area/telesciareas))
+			
+			if(A.type in typesof(/area/chapel,/area/hallway,/area/shuttle,/area/centcom,/area/asteroid,/area/tdome,/area/planet,/area/telesciareas,/area/awaymission))
 				usr << "\red \i The shadow rune cannot work here."
 				return
+			
+			var/obj/effect/rune/R	=	src
+			//src = null	//Not null so it stops on delete
 			var/count
 			for(var/area/LSA in A.related)
 				for(var/turf/T in LSA)
 					count++
-			usr << "Area size: [count]"
+			//usr << "Area size: [count]"
 			if(count <= 200)
 				A.shadow = 1
-				active = 1
-				var/damage = round(count/100,1)
-				drained = usr
-				for(var/mob/search as obj|mob in area_contents(A))
-					if(search.type in typesof(/obj/effect/rune,/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
-						search.invisibility = 55
-					if(isliving(search))
+				A.shadow_rune = R
+				R.active = 1
+				var/damage = round(count/100,0.5)
+				R.drained = usr
+				for(var/area/LSA in A.related)
+					for(var/mob/living/search in LSA)
+						R.shadow_mobs += search
 						search.invisibility = 55
 						search.see_invisible = 55
 						search.see_override = 55
-						
+					for(var/obj/effect/search in LSA)
+						if(search.type in typesof(/obj/effect/rune,/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
+							search.invisibility = 55
+							R.shadow_stuff += search
+				
 				while(1)
-					if(this_rune && drained && drained.stat==CONSCIOUS && drained.client && drained.lastarea.master==A)
-						drained.take_organ_damage(damage, 0)
-						drained << "DAMGED [damage]"
+					/*
+					//CHECK FOR TELEPORT OUT
+					for(var/mob/living/search in R.shadow_mobs)
+						if(get_area_master(search) != A)
+							R.shadow_mobs -= search
+							search.invisibility = initial(search.invisibility)
+							search.see_override = 0
+							search.see_invisible =	initial(search.see_invisible)
+					*/		
+					/*
+					for(var/area/LSA in A.related)
+						for(var/mob/living/search in LSA)
+							R.shadow_mobs += search
+							search.invisibility = 55
+							search.see_invisible = 55
+							search.see_override = 55
+					*/
+					for(var/mob/living/search in mob_list)
+						var/area/master = get_area_master(search)
+						if(master == A && search.see_override != 55)
+							R.shadow_mobs += search
+							search.lastarea = get_area(search)
+							search.invisibility = 55
+							search.see_invisible = 55
+							search.see_override = 55
+						else if(!master.shadow)
+							R.shadow_mobs -= search
+							search.invisibility = initial(search.invisibility)
+							search.see_override = 0
+							search.see_invisible =	initial(search.see_invisible)
+					//world << "LAGGING"
+					
+					if(R && R.drained && R.drained.see_override && R.drained.stat==CONSCIOUS && R.drained.client && R.drained.lastarea.master==A)
+						R.drained.take_organ_damage(damage, 0)
+						//R.drained << "DAMAGED [damage]"
 					else
+						//Find replacement
 						var/check =0
-						for(var/mob/M as mob in area_contents(A))	//find user
-							if(iscultist(M) && M.stat==CONSCIOUS && drained.client)
-								drained = M
-								drained.take_organ_damage(damage, 0)
-								check =1
-								drained << "FOUND "
-								break
-							drained <<"NOT FOUND "
+						if(R)
+							for(var/mob/M in R.shadow_mobs)	//find user
+								if(iscultist(M) && M.stat==CONSCIOUS && M.client)
+									R.drained = M
+									R.drained.take_organ_damage(damage, 0)
+									check =1
+									R.drained << "\red The shadow rune has selected you as its new master"
+									break
+								//R.drained <<"NOT FOUND "
+						//EXIT
 						if(!check)
-							A.shadow = 0
-							active = 0
-							for(var/mob/search as obj|mob in area_contents(A))
-								if(search.type in typesof(/obj/effect/decal/remains,/obj/effect/decal/cleanable/xenoblood,/obj/effect/decal/cleanable/blood,/obj/effect/decal/cleanable/robot_debris))
-									search.invisibility =0
-								if(isliving(search))
-									search.invisibility = initial(search.invisibility)
-									search.see_override = 0
-									search.see_invisible =	initial(search.see_invisible)
-							del(src)
+							del(R)
 							return
+					
 					sleep(80)
 				return
 			else
 				usr << "\red \i The area is to expansive for the rune to work!"
 			return
+			
+		shadow_remove()
+			var/area/A = get_area_master(src)
+			if(A.shadow_rune == src)
+				var/obj/effect/rune/R	=	src
+				R.drained << "EXIT"
+				A.shadow = 0
+				A.shadow_rune = null
+				R.active = 0
+				for(var/obj/effect/search in R.shadow_stuff)
+					if(istype(search,/obj/effect/rune))
+						continue
+					search.invisibility =0
+				for(var/mob/search in R.shadow_mobs)
+					search.invisibility = initial(search.invisibility)
+					search.see_override = 0
+					search.see_invisible =	initial(search.see_invisible)
 		
 

@@ -41,8 +41,8 @@
 	hitsound = 'sound/weapons/bladeslice.ogg'
 	attack_verb = list("slashed", "sliced", "torn", "ripped", "diced", "cut")
 	
-/obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, proximity_flag, click_parameters)
-	if(proximity_flag)
+/obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, click_parameters)
+	if(target.Adjacent(user))
 		var/name = target.name
 		var/capture = 0
 		if(istype(target,/obj/mecha))
@@ -142,7 +142,7 @@
 		
 /obj/item/weapon/gun/magic/wand/reincarnate
 	name = "wand of reincarnate"
-	desc = "This wand will reincarnate a construct or a shade back to life, its eldreich energy has a chance to cult someone."
+	desc = "This wand will reincarnate a construct or a shade back to life, it might work on a corpse."
 	ammo_type = "/obj/item/ammo_casing/magic/incar"
 	icon_state = "polywand"
 	max_charges = 8 //8, 4, 4, 3
@@ -160,46 +160,76 @@
 
 /obj/item/projectile/magic/incar/on_hit(var/atom/change)
 	var/mob/living/L = change
-	if(is_support(L))		// 20 percent to convert to cult on change on available mobs
+	if(is_support(L) && L.stat != DEAD)		// 20 percent to convert to cult on change on available mobs
 		ticker.mode.remove_cultist(L.mind,0)
-		var/mob/living/new_mob = reincarnate(L)
+		var/mob/living/new_mob = reincarnate(L,1)
 		if(!new_mob)
 			return
-		ticker.mode:add_cultist(new_mob.mind)
-	else if(ishuman(L) && prob(20))		//chance to cult when hit
-		ticker.mode:add_cultist(L.mind)
+		ticker.mode.add_cultist(new_mob.mind)
+	else if(ishuman(L) && L.stat == DEAD && L.client && prob(80))		//reincarnate when dead
+		ticker.mode.remove_cultist(L.mind,0)
+		var/mob/living/new_mob = reincarnate(L,2)
+		if(!new_mob)
+			return
+		ticker.mode.add_cultist(new_mob.mind)
 		
-/obj/item/projectile/magic/proc/reincarnate(mob/living/M)
-	if(istype(M, /mob/living) && M.stat != DEAD)
+		
+/obj/item/projectile/magic/proc/reincarnate(mob/living/M,type = 1)
+	if(istype(M, /mob/living))
 		if(M.notransform)	return
 		M.notransform = 1
 		M.canmove = 0
 		M.icon = null
 		M.overlays.Cut()
 		M.invisibility = 101
+		if(type == 1 || prob(50))
+			var/mob/living/carbon/human/new_mob = new /mob/living/carbon/human(M.loc)
+			
+			var/datum/preferences/A = new()	//Randomize appearance for the human
+			A.copy_to(new_mob)
+			
+			ready_dna(new_mob)
+			if(new_mob.dna)
+				new_mob.dna.mutantrace = pick("lizard","golem","slime","shadow","adamantine","skeleton","")
+				new_mob.update_body()
+			new_mob.attack_log = M.attack_log
+			M.attack_log += text("\[[time_stamp()]\] <font color='orange'>[M.real_name] ([M.ckey]) became [new_mob.real_name].</font>")
+	
+			new_mob.a_intent = "harm"
+			if(M.mind)
+				M.mind.transfer_to(new_mob)
+			else
+				new_mob.key = M.key
+	
+			new_mob << "<B>You reincarnate into a human.</B>"
+			del(M)
+			return new_mob
+		else if(type == 2)
+			var/mob/living/simple_animal/corgi/NarIan/new_mob = new /mob/living/simple_animal/corgi/NarIan(M.loc)
+			new_mob.attack_log = M.attack_log
+			M.attack_log += text("\[[time_stamp()]\] <font color='orange'>[M.real_name] ([M.ckey]) became [new_mob.real_name].</font>")
+	
+			new_mob.a_intent = "harm"
+			if(M.mind)
+				M.mind.transfer_to(new_mob)
+			else
+				new_mob.key = M.key
+	
+			new_mob << "<B>You reincarnate into NarIan. KILL IAN!</B>"
+			del(M)
+			return new_mob
 
-		var/mob/living/carbon/human/new_mob = new /mob/living/carbon/human(M.loc)
-		
-		var/datum/preferences/A = new()	//Randomize appearance for the human
-		A.copy_to(new_mob)
-		
-		ready_dna(new_mob)
-		if(new_mob.dna)
-			new_mob.dna.mutantrace = pick("lizard","golem","slime","shadow","adamantine","skeleton","")
-			new_mob.update_body()
-		new_mob.attack_log = M.attack_log
-		M.attack_log += text("\[[time_stamp()]\] <font color='orange'>[M.real_name] ([M.ckey]) became [new_mob.real_name].</font>")
-
-		new_mob.a_intent = "harm"
-		if(M.mind)
-			M.mind.transfer_to(new_mob)
-		else
-			new_mob.key = M.key
-
-		new_mob << "<B>You reincarnate into a human.</B>"
-
-		del(M)
-		return new_mob
+/mob/living/simple_animal/corgi/NarIan
+	real_name = "corgi"
+	desc = "It's NarIan, Ian's dark borther from the pits of hell."
+	icon = 'icons/mob/NarIan.dmi'
+	icon_state = "nar_ian"
+	icon_living = "nar_ian"
+	icon_dead = "nar_ian_dead"
+	speak = list("Foolish mortal!","DIE!","Join the dark side!","KILL IAN!","YAP", "Woof!", "Bark!", "AUUUUUU")
+	speak_emote = list("barks", "woofs","RAGES","SCREAMS")
+	emote_hear = list("barks", "woofs", "yaps","pants","screams","rages")
+	emote_see = list("shakes its head", "shivers","spasms","ravages")
 
 /obj/item/clothing/head/culthood
 	name = "cult hood"

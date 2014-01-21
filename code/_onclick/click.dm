@@ -97,7 +97,7 @@
 		var/temp =0
 		if(W.flags&USEDELAY)
 			temp = 5
-		if(W.preattack(A,src,A.Adjacent(src),params))	//Weapon attack override,return 1 to exit
+		if(W.preattack(A,src,params))	//Weapon attack override,return 1 to exit
 			next_move = world.time + 10 + temp			//Add delay and exit,if we are not exiting we generally don't want delay
 			return
 

@@ -99,7 +99,7 @@
 			if(T.client != null)
 				if(C.contents.len)
 					return 0
-				new /obj/effect/decal/remains/human(T.loc) //Spawns a skeleton
+				//new /obj/effect/decal/remains/human(T.loc) //Spawns a skeleton
 				T.invisibility = 101
 				var/atom/movable/overlay/animation = new /atom/movable/overlay( T.loc )
 				animation.icon_state = "blank"
@@ -120,7 +120,7 @@
 				C.name = "Soul Stone: [S.real_name]"
 				S << "Your soul has been captured! You are now bound to [U.name]'s will, help them suceed in their goals at all costs."
 				C.imprinted = "[S.name]"
-				del T
+				//del T		//Gib instead
 				return 1
 			return 0
 		if("VICTIM")

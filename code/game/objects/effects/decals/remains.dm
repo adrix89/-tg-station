@@ -2,7 +2,15 @@
 	name = "remains"
 	gender = PLURAL
 	icon = 'icons/effects/blood.dmi'
-	anchored = 0
+	anchored = 1
+	
+/obj/effect/decal/remains/New()
+	var/area/A = get_area_master(src)
+	if(A.shadow)	//find if we are in shdow rune
+		var/obj/effect/rune/rune = A.shadow_rune
+		rune.shadow_stuff += src
+		invisibility = 55
+	..()
 
 /obj/effect/decal/remains/human
 	desc = "They look like human remains. They have a strange aura about them."

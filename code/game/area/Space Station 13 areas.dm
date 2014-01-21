@@ -30,6 +30,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	var/lightswitch = 1
 	
 	var/shadow = 0 //Used for cult shadow rune
+	var/obj/effect/rune/shadow_rune	//The active shadow rune
 
 	var/eject = null
 

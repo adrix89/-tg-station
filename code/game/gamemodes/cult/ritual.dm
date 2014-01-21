@@ -64,6 +64,8 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 	var/word1
 	var/word2
 	var/word3
+	var/list/shadow_mobs = list()
+	var/list/shadow_stuff = list()
 	var/active		//see if a rune is already active
 	var/mob/living/drained		//mob that is beeing drained
 // Places these combos are mentioned: this file - twice in the rune code, once in imbued tome, once in tome's HTML runes.dm - in the imbue rune code. If you change a combination - dont forget to change it everywhere.
@@ -96,11 +98,24 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 // self other technology - Communication rune  //was other hear blood
 // join hide technology - stun rune. Rune color: bright pink.
 	New()
+			
 		..()
 		var/image/blood = image(loc = src)
 		blood.override = 1
 		for(var/mob/living/silicon/ai/AI in player_list)
 			AI.client.images += blood
+		global.runes += src		//add to global list for easier searching
+		spawn(5)		//I have no idea why it can't get master
+			var/area/A = get_area_master(src)	//No idea why it can't fince the area normaly
+			if(A && A.shadow)	//find if we are in shadow rune
+				var/obj/effect/rune/R = A.shadow_rune
+				R.shadow_stuff += src
+				invisibility = 55
+			
+	Del()
+		shadow_remove()		//exit shadow rune
+		global.runes -= src
+		..()
 
 	examine()
 		set src in view(2)
@@ -125,11 +140,13 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 
 
 	attackby(I as obj, user as mob)
+		/*No more rune limit, runes are now permanent
 		if(istype(I, /obj/item/weapon/tome) && iscultist(user))
 			user << "<span class='notice'>You retrace your steps, carefully undoing the lines of the rune.</span>"
 			del(src)
 			return
-		else if(istype(I, /obj/item/weapon/nullrod))
+		*/
+		if(istype(I, /obj/item/weapon/nullrod))
 			user << "<span class='notice'>You disrupt the vile magic with the deadening field of the null rod!</span>"
 			del(src)
 			return
@@ -165,7 +182,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			return drain()
 		if(word1 == wordsee && word2 == wordhell && word3 == wordjoin)
 			return seer()
-		if(word1 == wordblood && word2 == wordjoin && word3 == wordhell)
+		if(word1 == worddestr && word2 == wordjoin && word3 == wordblood)
 			return raise()
 		if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
 			return obscure(4)
@@ -178,7 +195,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 		if(word1 == wordhell && word2 == wordblood && word3 == wordjoin)
 			return sacrifice()
 		if(word1 == wordblood && word2 == wordsee && word3 == wordhide)
-			return revealrunes(src)
+			return revealrunes(6,src)
 		if(word1 == worddestr && word2 == wordtravel && word3 == wordself)
 			return wall()
 		if(word1 == wordtravel && word2 == wordtech && word3 == wordother)
@@ -228,7 +245,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
 				return obscure(4)
 			if(word1 == wordblood && word2 == wordsee && word3 == wordhide)
-				return revealrunes(src)
+				return revealrunes(6,src)
 			if(word1 == worddestr && word2 == wordtravel && word3 == wordself)
 				return wall()
 			if(word1 == wordhide && word2 == wordother && word3 == wordsee)
@@ -268,7 +285,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				icon_state = "4"
 				src.icon += rgb(0, 0 , 255)
 				return
-			if(word1 == wordblood && word2 == wordjoin && word3 == wordhell)
+			if(word1 == worddestr && word2 == wordjoin && word3 == wordblood)
 				icon_state = "1"
 				return
 			if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
@@ -536,17 +553,19 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 		if(!wordtravel)
 			runerandom()
 		if(iscultist(user))
+			/*
 			var/C = 0
-			for(var/obj/effect/rune/N in world)
+			for(var/obj/effect/rune/N in global.runes)
 				C++
+			*/
 			if (!istype(user.loc,/turf))
 				user << "\red You do not have enough space to write a proper rune."
 				return
 
 
 
-
-			if (C>=26+runedec+ticker.mode.cult.len) //including the useless rune at the secret room, shouldn't count against the limit of 25 runes - Urist
+			//No more Rune limit
+			if (0)//C>=26+runedec+ticker.mode.cult.len) //including the useless rune at the secret room, shouldn't count against the limit of 25 runes - Urist
 				alert("The cloth of reality can't take that much of a strain. Remove some runes first!")
 				return
 			else
@@ -585,7 +604,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				"wall" = list("destroy","travel","self"),
 				"blood boil" = list("destroy","see","blood"),
 				"blood drain" = list("travel","blood","self"),
-				"raise dead" = list("blood","join","hell"),
+				"raise dead" = list("destroy","join","blood"),
 				"summon narsie" = list("hell","join","self"),
 				"communicate" = list("self","other","technology"),
 				"emp" = list("destroy","see","technology"),
@@ -596,7 +615,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				"reveal" = list("blood","see","hide"),
 				"astral journey" = list("hell","travel","self"),
 				"imbue" = list("hell","technology","join"),
-				"sacrifice" = list("hell","blood","join"),
+				"sacrifice" = list("hell","blood","join"),	//SAC
 				"summon cultist" = list("join","other","self"),
 				"free cultist" = list("travel","technology","other"),
 				"silence" = list("hide","other","see"),
@@ -704,7 +723,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			var/r
 			if (!istype(user.loc,/turf))
 				user << "\red You do not have enough space to write a proper rune."
-			var/list/runes = list("teleport", "itemport", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "obscure", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "silence", "blind", "bloodboil", "communicate", "stun", "shadow")
+			var/list/runes = list("teleport", "teleport other", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "hide", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "silence", "blind", "bloodboil", "communicate", "stun", "shadow")
 			r = input("Choose a rune to scribe", "Rune Scribing") in runes //not cancellable.
 			var/obj/effect/rune/R = new /obj/effect/rune
 			if(istype(user, /mob/living/carbon/human))
@@ -722,7 +741,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 					R.word3=beacon
 					R.loc = user.loc
 					R.check_icon()
-				if("itemport")
+				if("teleport other")
 					var/list/words = list("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
 					var/beacon
 					if(usr)
@@ -775,12 +794,12 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 					R.loc = user.loc
 					R.check_icon()
 				if("raise")
-					R.word1=wordblood
+					R.word1=worddestr
 					R.word2=wordjoin
-					R.word3=wordhell
+					R.word3=wordblood
 					R.loc = user.loc
 					R.check_icon()
-				if("obscure")
+				if("hide")
 					R.word1=wordhide
 					R.word2=wordsee
 					R.word3=wordblood

@@ -259,6 +259,8 @@
 	if(src.master.shadow)
 		if(isliving(A))
 			var/mob/living/L = A
+			var/obj/effect/rune/R = src.master.shadow_rune
+			R.shadow_mobs -= L
 			L.invisibility =initial(L.invisibility)
 			L.see_override = 0
 			L.see_invisible =initial(L.see_invisible)
@@ -271,10 +273,19 @@
 	if(!istype(A,/mob/living))	return
 
 	var/mob/living/L = A
+	if(L.lastarea.master.shadow)
+		var/obj/effect/rune/R = L.lastarea.master.shadow_rune
+		R.shadow_mobs -= L
+		L.invisibility = initial(L.invisibility)
+		L.see_override = 0
+		L.see_invisible = initial(L.see_invisible)
 	if(src.master.shadow)
+		var/obj/effect/rune/R = src.master.shadow_rune
+		R.shadow_mobs += L
 		L.invisibility = 55
 		L.see_override = 55
 		L.see_invisible = 55
+	
 	if(!L.ckey)	return
 
 	if(!L.lastarea)
