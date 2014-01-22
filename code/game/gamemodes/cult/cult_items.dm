@@ -145,7 +145,7 @@
 	desc = "This wand will reincarnate a construct or a shade back to life, it might work on a corpse."
 	ammo_type = "/obj/item/ammo_casing/magic/incar"
 	icon_state = "polywand"
-	max_charges = 8 //8, 4, 4, 3
+	max_charges = 3
 	
 /obj/item/ammo_casing/magic/incar
 	projectile_type = /obj/item/projectile/magic/incar
@@ -166,7 +166,7 @@
 		if(!new_mob)
 			return
 		ticker.mode.add_cultist(new_mob.mind)
-	else if(ishuman(L) && L.stat == DEAD && L.client && prob(80))		//reincarnate when dead
+	else if(L.client && L.stat == DEAD && prob(80))		//reincarnate when dead
 		ticker.mode.remove_cultist(L.mind,0)
 		var/mob/living/new_mob = reincarnate(L,2)
 		if(!new_mob)
@@ -205,7 +205,7 @@
 			del(M)
 			return new_mob
 		else if(type == 2)
-			var/mob/living/simple_animal/corgi/NarIan/new_mob = new /mob/living/simple_animal/corgi/NarIan(M.loc)
+			var/mob/living/simple_animal/corgi/Ian/NarIan/new_mob = new /mob/living/simple_animal/corgi/Ian/NarIan(M.loc)
 			new_mob.attack_log = M.attack_log
 			M.attack_log += text("\[[time_stamp()]\] <font color='orange'>[M.real_name] ([M.ckey]) became [new_mob.real_name].</font>")
 	
@@ -219,17 +219,25 @@
 			del(M)
 			return new_mob
 
-/mob/living/simple_animal/corgi/NarIan
-	real_name = "corgi"
-	desc = "It's NarIan, Ian's dark borther from the pits of hell."
+/mob/living/simple_animal/corgi/Ian/NarIan
+	name = "NarIan"
+	real_name = "NarIan"
+	desc = "It's NarIan, Ian's dark brother from the pits of hell."
 	icon = 'icons/mob/NarIan.dmi'
 	icon_state = "nar_ian"
 	icon_living = "nar_ian"
 	icon_dead = "nar_ian_dead"
+	maxHealth = 80
+	health = 80
 	speak = list("Foolish mortal!","DIE!","Join the dark side!","KILL IAN!","YAP", "Woof!", "Bark!", "AUUUUUU")
-	speak_emote = list("barks", "woofs","RAGES","SCREAMS")
+	speak_emote = list("rages","screams","barks", "woofs")
 	emote_hear = list("barks", "woofs", "yaps","pants","screams","rages")
 	emote_see = list("shakes its head", "shivers","spasms","ravages")
+	
+/mob/living/simple_animal/corgi/Ian/NarIan/New()
+	..()
+	//spell_list += new /obj/effect/proc_holder/spell/targeted/mind_transfer	//No spell until spells are in mind
+	//Unleash the chaos,unleash the horror that is NarIan!
 
 /obj/item/clothing/head/culthood
 	name = "cult hood"

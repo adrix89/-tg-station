@@ -25,6 +25,7 @@
 					call(/obj/effect/rune/proc/obscure)(2)
 				if("revealrunes")
 					call(/obj/effect/rune/proc/revealrunes)(1+uses,src)
+					uses = 0
 				if("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
 					call(/obj/effect/rune/proc/teleport)(imbue)
 				if("communicate")
@@ -44,6 +45,7 @@
 				if(delete)
 					uses--
 					if(uses <= 0)
+						usr << "\red There is nothing left of the talisman!"
 						user.drop_item(src)
 						del(src)
 					else
@@ -99,7 +101,6 @@
 				playsound(O.loc, "sparks", 50, 1)
 				uses--
 				if(uses <=0)
-					usr << "\red Your talisman turns into red dust."
 					user.drop_item(src)
 					del(src)
 				else
@@ -166,7 +167,7 @@
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "conceal"
-					T.uses = 3
+					T.uses = 2
 				if("reveal")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)

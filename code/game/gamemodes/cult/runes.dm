@@ -1259,6 +1259,7 @@ var/list/sacrificed = list()
 //////////             Rune 26
 
 		shadow()
+			usr.say("V'etho arba le't nak su[pick("'","`")]likarak!")
 			if(active)
 				drained = usr	//swap users
 				usr << "\red \i The shadow rune recognizes you as its new master."
@@ -1271,9 +1272,10 @@ var/list/sacrificed = list()
 			for(var/obj/effect/rune/R in global.runes)
 				if(R.active)
 					rune_count++
+			var/mob/living/user = usr
 			if(rune_count > 3)
 				usr << "\red You feel pain, as the rune disappears in reality shift caused by too much wear of space-time fabric."
-				var/mob/living/user = usr
+				
 				if (istype(user, /mob/living))
 					user.take_overall_damage(5, 0)
 				del(src)
@@ -1293,6 +1295,9 @@ var/list/sacrificed = list()
 					count++
 			//usr << "Area size: [count]"
 			if(count <= 200)
+				user.visible_message("\red The fabric of reality around shifts and turns.", \
+			"\red You power up the shadow rune veiling the area from outside eyes.", \
+			"\red You hear a slosh.")
 				A.shadow = 1
 				A.shadow_rune = R
 				R.active = 1
@@ -1327,7 +1332,7 @@ var/list/sacrificed = list()
 							search.see_invisible = 55
 							search.see_override = 55
 					*/
-					for(var/mob/living/search in mob_list)
+					for(var/mob/living/search in player_list)
 						var/area/master = get_area_master(search)
 						if(master == A && search.see_override != 55)
 							R.shadow_mobs += search
@@ -1372,7 +1377,7 @@ var/list/sacrificed = list()
 			var/area/A = get_area_master(src)
 			if(A.shadow_rune == src)
 				var/obj/effect/rune/R	=	src
-				R.drained << "EXIT"
+				//R.drainedNarIan
 				A.shadow = 0
 				A.shadow_rune = null
 				R.active = 0
@@ -1381,6 +1386,7 @@ var/list/sacrificed = list()
 						continue
 					search.invisibility =0
 				for(var/mob/search in R.shadow_mobs)
+					search << "\red \i The forces that cloak you have left."
 					search.invisibility = initial(search.invisibility)
 					search.see_override = 0
 					search.see_invisible =	initial(search.see_invisible)
