@@ -175,6 +175,8 @@
 		
 		
 /obj/item/projectile/magic/proc/reincarnate(mob/living/M,type = 1)
+	if(ticker.mode.name == "cult" && M.mind == ticker.mode:sacrifice_target)
+		return
 	if(istype(M, /mob/living))
 		if(M.notransform)	return
 		M.notransform = 1

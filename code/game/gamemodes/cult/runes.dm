@@ -136,6 +136,8 @@ var/list/sacrificed = list()
 							ticker.mode.grant_runeword(usr, convert_word)
 						return 1
 					*/
+				else if(ticker.mode.name == "cult" && M.mind == ticker.mode:sacrifice_target)
+					usr << "\red The Geometer of blood wants this mortal sacrificed."
 				else
 					M << "<font color=\"purple\"><b><i>Your blood pulses. Your head throbs. The world goes red. All at once you are aware of a horrible, horrible truth. The veil of reality has been ripped away and in the festering wound left behind something sinister takes root.</b></i></font>"
 					M << "<font color=\"red\"><b>And not a single fuck was given, exterminate the cult at all costs.</b></font>"
