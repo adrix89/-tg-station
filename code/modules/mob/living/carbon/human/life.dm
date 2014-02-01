@@ -1039,9 +1039,6 @@
 				see_in_dark = 8
 				see_invisible = SEE_INVISIBLE_LEVEL_TWO
 
-			if(seer)
-				see_invisible = SEE_INVISIBLE_OBSERVER
-
 			if(mind && mind.changeling)
 				hud_used.lingchemdisplay.invisibility = 0
 				hud_used.lingchemdisplay.maptext = "<div align='center' valign='middle' style='position:relative; top:0px; left:6px'> <font color='#dd66dd'>[src.mind.changeling.chem_charges]</font></div>"

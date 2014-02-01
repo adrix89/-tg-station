@@ -29,8 +29,8 @@
 		user.make_dizzy(120)
 
 /obj/item/weapon/melee/ironslayer
-	name = "iron katana"
-	desc = "Doesn't look that powerfull at first, but goes throght metal like butter."
+	name = "Jack's katana"
+	desc = "The sword of a samurai from the past that was sent to the future where he was slained by Nar-Sie. Goes throght metal like butter."
 	icon_state = "katana"
 	item_state = "katana"
 	flags = CONDUCT | USEDELAY
@@ -241,7 +241,7 @@
 	//spell_list += new /obj/effect/proc_holder/spell/targeted/mind_transfer	//No spell until spells are in mind
 	//Unleash the chaos,unleash the horror that is NarIan!
 
-/obj/item/clothing/head/culthood
+/obj/item/clothing/head/cult
 	name = "cult hood"
 	icon_state = "culthood"
 	desc = "A hood worn by the followers of Nar-Sie."
@@ -254,15 +254,15 @@
 	max_heat_protection_temperature = HELMET_MAX_TEMP_PROTECT
 
 
-/obj/item/clothing/head/culthood/alt
+/obj/item/clothing/head/cult/alt
 	icon_state = "cult_hoodalt"
 	item_state = "cult_hoodalt"
 
-/obj/item/clothing/suit/cultrobes/alt
+/obj/item/clothing/suit/cult/alt
 	icon_state = "cultrobesalt"
 	item_state = "cultrobesalt"
 
-/obj/item/clothing/suit/cultrobes
+/obj/item/clothing/suit/cult
 	name = "cult robes"
 	desc = "A set of armored robes worn by the followers of Nar-Sie"
 	icon_state = "cultrobes"
@@ -276,7 +276,7 @@
 	heat_protection = CHEST|GROIN|LEGS|ARMS
 	max_heat_protection_temperature = ARMOR_MAX_TEMP_PROTECT
 
-/obj/item/clothing/head/magus
+/obj/item/clothing/head/cult/magus
 	name = "magus helm"
 	icon_state = "magus"
 	item_state = "magus"
@@ -285,7 +285,7 @@
 	flags = HEADCOVERSEYES|HEADCOVERSMOUTH|BLOCKHAIR
 	armor = list(melee = 40, bullet = 30, laser = 30,energy = 20, bomb = 25, bio = 10, rad = 0)
 
-/obj/item/clothing/suit/magusred
+/obj/item/clothing/suit/cult/magusred
 	name = "magus robes"
 	desc = "A set of armored robes worn by the followers of Nar-Sie. It has a forcefield around it."
 	icon_state = "magusred"
@@ -302,8 +302,8 @@
 	desc = "A space worthy helmet used by the followers of Nar-Sie"
 	icon_state = "cult_helmet"
 	item_state = "cult_helmet"
-	armor = list(melee = 60, bullet = 50, laser = 30,energy = 15, bomb = 30, bio = 60, rad = 30)
-
+	armor = list(melee = 30, bullet = 20, laser = 30,energy = 20, bomb = 15, bio = 50, rad = 30)
+	
 /obj/item/clothing/suit/space/cult
 	name = "cult armour"
 	icon_state = "cult_armour"
@@ -311,5 +311,27 @@
 	desc = "A bulky suit of armour, bristling with spikes. It looks space proof."
 	w_class = 3
 	allowed = list(/obj/item/weapon/tome,/obj/item/weapon/melee/cultblade,/obj/item/weapon/tank/emergency_oxygen)
+	slowdown = 0
+	armor = list(melee = 30, bullet = 20, laser = 30,energy = 20, bomb = 15, bio = 50, rad = 30)
+	
+//New robust cult rig, it will let you space walk like constructs
+/obj/item/clothing/head/helmet/space/cult/construct
+	name = "construct styled hardsuit helmet"
+	desc = "A space helmet enchanted with Nar-Sie's wisdom."
+	icon_state = "cult_rig_helm"
+	item_state = "cult_rig_helm"
+	armor = list(melee = 60, bullet = 50, laser = 30,energy = 30, bomb = 30, bio = 100, rad = 60)
+	heat_protection = HEAD												//Uncomment to enable firesuit protection
+	max_heat_protection_temperature = FIRE_HELM_MAX_TEMP_PROTECT
+	
+/obj/item/clothing/suit/space/cult/construct
+	name = "construct styled hardsuit"
+	icon_state = "cult_rig"
+	item_state = "cult_rig"
+	desc = "A powerful suit enchanted with Nar-Sie's wisdom. It can thread throgh space with no fear."
+	w_class = 4
+	allowed = list(/obj/item/weapon/tome,/obj/item/weapon/melee/cultblade,/obj/item/weapon/tank)
 	slowdown = 1
-	armor = list(melee = 60, bullet = 50, laser = 30,energy = 15, bomb = 30, bio = 60, rad = 30)
+	armor = list(melee = 60, bullet = 50, laser = 30,energy = 30, bomb = 30, bio = 100, rad = 60)
+	heat_protection = CHEST|GROIN|LEGS|FEET|ARMS|HANDS					//Uncomment to enable firesuit protection
+	max_heat_protection_temperature = FIRE_SUIT_MAX_TEMP_PROTECT

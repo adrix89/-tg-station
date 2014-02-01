@@ -125,7 +125,7 @@
 
 
 /datum/game_mode/cult/proc/memorize_cult_objectives(var/datum/mind/cult_mind)
-	var/note ={"<font size='2' color=#000099>Note from adrix89:<BR>The cult gamemode has had a bit of a redesign and information is not yet available on the wiki so I am here to give you some starter tips:<BR>Cult now is intended to be played as a team, you need 3 cultists to use sacrifice or convert runes, so get together and plan ahead.<BR>You can find other cultists by just looking around the station or setting up a meeting place with the communication talisman.<BR>You can solo if you utilize your armor talisman it's still a good idea to have at least one cultist around to lure people stealthily.<BR>Sacrificed players now become soulstones, shades can now use teleport,teleport other,emp,seer,hide,reveal,wall,silence,blind,stun and communicate runes.<BR>It is important to prepare whatever runes you can as fast as you get them, if you get caught always have a means to escape.<BR><BR>This mode is on trial,suggestions,complains and feedback can be given http://www.ss13.eu/phpbb/viewtopic.php?f=5&t=2688 , if you don't like it, it will be removed, so don't worry and just give it your best shot.</font>"}
+	var/note ={"<font size='2' color=#000099><B>Note from adrix89:</B><BR><BR>The cult gamemode has had a bit of a redesign and information is not yet available on the wiki so I am here to give you some starter tips:<BR><BR>Cult now is intended to be played as a team, you need 3 cultists to use sacrifice or convert runes, so get together and plan ahead.<BR>You can find other cultists by just looking around the station or setting up a meeting place with the communication talisman.<BR>You can solo if you utilize your armor talisman it's still a good idea to have at least one cultist around to lure people stealthily.<BR>It is important to prepare whatever runes you can as fast as you get them, if you get caught always have a means to escape.<BR><BR><font size='2' color="red"><B>Important Changes:</B><BR><BR>Sacrificed players now become soulstones, shades can now use some basic runes, and can move through walls, so use them as scouts and managers.<BR>Constructs can now move throght space freely, and can be put back into a free soulstone.<BR>Talismans can now have charge and a number of uses. A talisman will have AoE range based on charge however you can also attack individual objects with it like the stun talisman.<BR>The armor talisman is able to transmute some high level gear when you wear them, use it for example to transform rigs to cult equivalent.<BR><B>Remember you either need 3 cultists or have cult armor(head,suit,boots) equivalent and blade to use sacrifice and convert rune,</B> the ironslayer is not a cult blade.</font><BR><BR>This mode is on trial,suggestions,complains and feedback can be given http://www.ss13.eu/phpbb/viewtopic.php?f=5&t=2688 , if you don't like it, it will be removed, so don't worry and just give it your best shot.<BR></font>"}
 	cult_mind.memory += note
 	cult_mind.memory += "<HR><BR>"
 	for(var/obj_count = 1,obj_count <= objectives.len,obj_count++)
@@ -143,7 +143,7 @@
 			if("eldergod")
 				explanation = "Summon Nar-Sie via the use of the appropriate rune (Hell join self). It will only work if nine cultists stand on and around it."
 		cult_mind.current << "<B>Objective #[obj_count]</B>: [explanation]"
-		cult_mind.memory += "<B>Objective #[obj_count]</B>: [explanation]<BR>"
+		cult_mind.memory += "<B>Objective #[obj_count]</B>: [explanation]"
 	cult_mind.current << "The Geometer of Blood grants knowledge for blood, sacrifice to get more knowledge. (Hell Blood Join)"
 	cult_mind.memory += "The Geometer of Blood grants knowledge for blood, sacrifice to get more knowledge. (Hell Blood Join)<BR>"
 	learn_words(cult_mind.current)
@@ -280,6 +280,8 @@
 		support -= cult_mind
 		if(show_message)
 			cult_mind.current << "\red <FONT size = 3><B>An unfamiliar white light flashes through your mind, cleansing the taint of the dark-one and the memories of your time as his servant with it.</B></FONT>"
+			for(var/mob/M in viewers(cult_mind.current))
+				M << "<FONT size = 3>[cult_mind.current] looks like they just reverted to their old faith!</FONT>"
 		cult_mind.memory = ""
 		update_cult_icons_removed(cult_mind)
 		cult_mind.current.attack_log += "\[[time_stamp()]\] <font color='red'>Has renounced the cult!</font>"

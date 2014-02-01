@@ -123,6 +123,8 @@
 
 	proc/supply(var/key)
 		if (!src.uses)
+			var/mob/living/user = usr
+			user.drop_item(src)
 			del(src)
 			return
 

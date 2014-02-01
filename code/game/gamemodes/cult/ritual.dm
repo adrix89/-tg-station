@@ -99,19 +99,18 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 // self other technology - Communication rune  //was other hear blood
 // join hide technology - stun rune. Rune color: bright pink.
 	New()
-			
+		
+		global.runes += src		//add to global list for easier searching
 		..()
 		var/image/blood = image(loc = src)
 		blood.override = 1
 		for(var/mob/living/silicon/ai/AI in player_list)
 			AI.client.images += blood
-		global.runes += src		//add to global list for easier searching
-		spawn(5)		//I have no idea why it can't get master
-			var/area/A = get_area_master(src)	//No idea why it can't fince the area normaly
-			if(A && A.shadow)	//find if we are in shadow rune
-				var/obj/effect/rune/R = A.shadow_rune
-				R.shadow_stuff += src
-				invisibility = 55
+		var/area/A = get_area_master(usr)	//No idea why it can't fince the area normaly
+		if(A && A.shadow)	//find if we are in shadow rune
+			var/obj/effect/rune/R = A.shadow_rune
+			R.shadow_stuff += src
+			invisibility = 55
 			
 	Del()
 		shadow_remove()		//exit shadow rune
@@ -183,7 +182,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			return drain()
 		if(word1 == wordsee && word2 == wordhell && word3 == wordjoin)
 			return seer()
-		if(word1 == worddestr && word2 == wordjoin && word3 == wordblood)
+		if(word1 == worddestr && word2 == wordjoin && word3 == wordother)
 			return raise()
 		if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
 			return obscure(4)
@@ -287,7 +286,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				icon_state = "4"
 				src.color = rgb(0, 0 , 255)
 				return
-			if(word1 == worddestr && word2 == wordjoin && word3 == wordblood)
+			if(word1 == worddestr && word2 == wordjoin && word3 == wordother)
 				icon_state = "1"
 				return
 			if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
@@ -351,12 +350,11 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				return
 			if(word1 == wordhide && word2 == wordsee && word3 == wordtech)
 				icon_state = "4"
-				src.icon += rgb(0, 0, 0)
+				src.color += rgb(0, 0, 0)
 				return
 			if(word1 == wordhell && word2 == worddestr && word3 == wordother)
-				icon_state="[rand(1,6)]" //random shape and color for dummy runes
-				src.icon -= rgb(255,255,255)
-				src.icon += rgb(rand(1,255),rand(1,255),rand(1,255))
+				icon_state="[rand(1,6)]"
+				src.color = rgb(rand(1,255),rand(1,255),rand(1,255))
 				return
 			dummy = 1	//check to see if its dummy
 			icon_state="[rand(1,6)]" //random shape and color for dummy runes
@@ -398,7 +396,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<b>Summon Nar-Sie: </b>Hell Join Self<br>
 				<b>Disable technology: </b>Destroy See Technology<br>
 				<b>Drain blood: </b>Travel Blood Self<br>
-				<b>Raise dead: </b>Blood Join Hell<br>
+				<b>Raise dead: </b>Destroy Join Other<br>
 				<b>Hide runes: </b>Hide See Blood<br>
 				<b>Reveal hidden runes: </b>Blood See Hide<br>
 				<b>Leave your body: </b>Hell travel self<br>
@@ -428,7 +426,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<h3>Summon Nar-Sie</h3>
 				The ultimate rune. It summons the Avatar of Nar-Sie himself, tearing a huge hole in reality and consuming everything around it. Summoning it is the final goal of any cult.<br>
 				<h3>Disable Technology</h3>
-				Invoking this rune creates a strong electromagnetic pulse in a small radius, making it basically analogic to an EMP grenade. You can imbue this rune into a talisman, making it a decent defensive item.<br>
+				Invoking this rune creates a strong electromagnetic pulse in a small radius, making it basically analogic to an EMP grenade. You can imbue this rune into a talisman, in this form you can attack object directly,you can hurt cyborgs and bots,disable cameras and even destory apc when fully charged,it can trigger an electromagnetic pulse based on charge left in the talisman.<br>
 				<h3>Drain Blood</h3>
 				This rune instantly heals you of some brute damage at the expense of a person placed on top of the rune. Whenever you invoke a drain rune, ALL drain runes on the station are activated, draining blood from anyone located on top of those runes. This includes yourself, though the blood you drain from yourself just comes back to you. This might help you identify this rune when studying words. One drain gives up to 25HP per each victim, but you can repeat it if you need more. Draining only works on living people, so you might need to recharge your "Battery" once its empty. Drinking too much blood at once might cause blood hunger.<br>
 				<h3>Raise Dead</h3>
@@ -444,13 +442,13 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<h3>Imbue a talisman</h3>
 				This rune allows you to imbue the magic of some runes into paper talismans. Create an imbue rune, then an appropriate rune beside it. Put an empty piece of paper on the imbue rune and invoke it. You will now have a one-use talisman with the power of the target rune. Using a talisman drains some health, so be careful with it. You can imbue a talisman with power of the following runes: summon tome, reveal, conceal, teleport, tisable technology, communicate, silence, blind and stun.<br>
 				<h3>Sacrifice</h3>
-				Sacrifice rune allows you to sacrifice a living thing or a body to the Geometer of Blood. Monkeys and dead humans are the most basic sacrifices, they might or might not be enough to gain His favor. A living human is what a real sacrifice should be, however, you will need 3 people chanting the invocation to sacrifice a living person or an enchanted cultist armor and sword.
+				Sacrifice rune allows you to sacrifice a living thing or a body to the Geometer of Blood. Monkeys and dead humans are the most basic sacrifices, they might or might not be enough to gain His favor. A living human is what a real sacrifice should be, however, you will need 3 people chanting the invocation to sacrifice a living person or an enchanted cultist armor and sword. If you collect all words throght this he will reward you generously.
 				<h3>Create a wall</h3>
 				Invoking this rune solidifies the air above it, creating an an invisible wall. To remove the wall, simply invoke the rune again.
 				<h3>Summon cultist</h3>
-				This rune allows you to summon a fellow cultist to your location. The target cultist must be unhandcuffed ant not buckled to anything. You also need to have 3 people chanting at the rune to successfully invoke it. Invoking it takes heavy strain on the bodies of all chanting cultists.<br>
+				This rune allows you to summon a fellow cultist to your location. The target cultist must be unhandcuffed ant not buckled to anything. You also need to have 2 people chanting at the rune to successfully invoke it or an enchanted cultist armor and sword. Invoking it takes a strain on the bodies of all chanting cultists.<br>
 				<h3>Free a cultist</h3>
-				This rune unhandcuffs and unbuckles any cultist of your choice, no matter where he is. Invoking it takes heavy strain on the bodies of all chanting cultists.<br>
+				This rune unhandcuffs and unbuckles any cultist of your choice, no matter where he is.You also need to have 2 people chanting at the rune to successfully invoke it or an enchanted cultist armor and sword. Invoking it takes a light strain on the bodies of all chanting cultists.<br>
 				<h3>Silence</h3>
 				This rune temporarily silence and deafen all non-cultists around you.<br>
 				<h3>Blind</h3>
@@ -462,7 +460,14 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<h3>Stun</h3>
 				Unlike other runes, this ons is supposed to be used in talisman form. When invoked directly, it simply releases some dark energy, briefly stunning everyone around. When imbued into a talisman, you can force all of its energy into one person, stunning him so hard he cant even speak. However, effect wears off rather fast.<br>
 				<h3>Equip Armor</h3>
-				When this rune is invoked, either from a rune or a talisman, it will equip the user with the armor of the followers of Nar-Sie. To use this rune to its fullest extent, have helmet, galoshes, armor or rig equipped and it will be transmuted to the cult equivalent, and make sure you are not holding anything in your hands. You need hood,robe,boots and sword to utilize the sacrifice and convert runes freely.<br>
+				When this rune is invoked, either from a rune or a talisman, it will equip the user with the armor of the followers of Nar-Sie. To use this rune to its fullest extent, have helmet, armor or rig equipped and it will be transmuted to the cult equivalent. You need hood,robe,boots and sword to utilize the sacrifice and convert runes freely.>
+				Recepies for transmutaion are as follows: 
+				Any hardsuit suit/helmet for the cult hardsuit; 
+				Captain's Carapace,HoS coat,ablative armor for reflective cult armor; 
+				Any thick suit like firsuit,bomb suit,bio suit for a space worthy cult suit; 
+				A helmet for cult helmet; 
+				A hood that covers the whole head like bio or bomb hood for a space worthy helmet; 
+				Footwear that doesn't slip for special boots.
 				<h3>See Invisible</h3>
 				When invoked when standing on it, this rune allows the user to see the the world beyond as long as he does not move.<br>
 				</body>
@@ -606,7 +611,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				"wall" = list("destroy","travel","self"),
 				"blood boil" = list("destroy","see","blood"),
 				"blood drain" = list("travel","blood","self"),
-				"raise dead" = list("destroy","join","blood"),
+				"raise dead" = list("destroy","join","other"),
 				"summon narsie" = list("hell","join","self"),
 				"communicate" = list("self","other","technology"),
 				"emp" = list("destroy","see","technology"),
@@ -798,7 +803,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				if("raise")
 					R.word1=worddestr
 					R.word2=wordjoin
-					R.word3=wordblood
+					R.word3=wordother
 					R.loc = user.loc
 					R.check_icon()
 				if("hide")

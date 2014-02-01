@@ -137,7 +137,24 @@ var/list/sacrificed = list()
 						return 1
 					*/
 				else if(ticker.mode.name == "cult" && M.mind == ticker.mode:sacrifice_target)
-					usr << "\red The Geometer of blood wants this mortal sacrificed."
+					usr << "\red The Geometer of blood wants this mortal [M.name] sacrificed."
+					return 0
+				else if(isloyal(M))
+					ticker.mode.support += M.mind
+					M.mind.special_role = "traitor"
+					ticker.mode.update_cult_icons_added(M.mind)
+					var/datum/objective/survive/survive = new
+					survive.owner = M.mind
+					M.mind.objectives += survive
+					M.attack_log += "\[[time_stamp()]\] <font color='red'>Was made into a survivor, and trusts no one!</font>"
+					M << "<font color=\"purple\"><b><i>Your blood pulses. Your head throbs. The world goes red. All at once you are aware of a horrible, horrible truth. The veil of reality has been ripped away and in the festering wound left behind something sinister takes root.</b></i></font>"
+					M << "\red <B>And your mind is torn asunder!</B> Your divided mind is in conflict between the enforced loyalty to your comrades and the eldritch force of your new dark brothers. Choose to help either one of these factions. Or let insanity take root and trust no one else."
+					M.mind.memory += "Your mind is divided.You can chose which faction between the loyalists and cultists you wish to help. Or let insanity take root and trust no one.<BR>"
+					var/obj_count = 1
+					for(var/datum/objective/OBJ in M.mind.objectives)
+						M << "<B>Objective #[obj_count]</B>: [OBJ.explanation_text]"
+						obj_count++
+					return 1
 				else
 					M << "<font color=\"purple\"><b><i>Your blood pulses. Your head throbs. The world goes red. All at once you are aware of a horrible, horrible truth. The veil of reality has been ripped away and in the festering wound left behind something sinister takes root.</b></i></font>"
 					M << "<font color=\"red\"><b>And not a single fuck was given, exterminate the cult at all costs.</b></font>"
@@ -149,10 +166,10 @@ var/list/sacrificed = list()
 			if(ishuman(usr))
 				var/mob/living/carbon/human/H = usr
 				var/obj/item/slot_item = H.get_item_by_slot(slot_head)
-				if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/head/culthood,/obj/item/clothing/head/magus,/obj/item/clothing/head/helmet/space/cult)))
+				if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/head/cult,/obj/item/clothing/head/helmet/space/cult)))
 					return 0
 				slot_item = H.get_item_by_slot(slot_wear_suit)
-				if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/suit/cultrobes,/obj/item/clothing/suit/magusred,/obj/item/clothing/suit/space/cult)))
+				if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/suit/cult,/obj/item/clothing/suit/space/cult)))
 					return 0
 				if(!istype(H.get_item_by_slot(slot_shoes),/obj/item/clothing/shoes/cult))
 					return 0
@@ -308,7 +325,7 @@ var/list/sacrificed = list()
 			is_sacrifice_target = 0
 			find_sacrifice:
 				for(var/obj/effect/rune/R in global.runes)
-					if(R.word1==wordblood && R.word2==wordjoin && R.word3==wordhell)
+					if(R.word1==worddestr && R.word2==wordjoin && R.word3==wordother)
 						for(var/mob/living/carbon/human/N in R.loc)
 							if(ticker.mode.name == "cult" && N.mind && N.mind == ticker.mode:sacrifice_target)
 								is_sacrifice_target = 1
@@ -321,7 +338,7 @@ var/list/sacrificed = list()
 				if (is_sacrifice_target)
 					usr << "\red The Geometer of blood wants that corpse for himself."
 				else
-					usr << "\red The sacrifical corpse is not dead. You must free it from this world of illusions before it may be used."
+					usr << "\red There is no suitable sacrifice. Make sure a living sacrificial victim is placed on the rune."
 				return fizzle()
 
 			var/mob/dead/observer/ghost
@@ -517,11 +534,13 @@ var/list/sacrificed = list()
 				if(R.word1==worddestr && R.word2==wordsee && R.word3==wordtech) //emp
 					T = new(src.loc)
 					T.imbue = "emp"
+					T.uses = 3
 					imbued_from = R
 					break
-				if(R.word1==wordblood && R.word2==wordsee && R.word3==worddestr) //conceal
+				if(R.word1 == wordhide && R.word2 == wordsee && R.word3 == wordblood) //conceal
 					T = new(src.loc)
 					T.imbue = "conceal"
+					T.uses = 2
 					imbued_from = R
 					break
 				if(R.word1==wordhell && R.word2==worddestr && R.word3==wordother) //armor
@@ -532,6 +551,7 @@ var/list/sacrificed = list()
 				if(R.word1==wordblood && R.word2==wordsee && R.word3==wordhide) //reveal
 					T = new(src.loc)
 					T.imbue = "revealrunes"
+					T.uses = 3
 					imbued_from = R
 					break
 				if(R.word1==wordhide && R.word2==wordother && R.word3==wordsee) //silence
@@ -547,6 +567,7 @@ var/list/sacrificed = list()
 				if(R.word1==wordself && R.word2==wordother && R.word3==wordtech) //communicat
 					T = new(src.loc)
 					T.imbue = "communicate"
+					T.uses = 4
 					imbued_from = R
 					break
 				if(R.word1==wordjoin && R.word2==wordhide && R.word3==wordtech) //stun
@@ -778,7 +799,7 @@ var/list/sacrificed = list()
 			
 				
 		lesser_reward(var/mob/T)
-			if(prob(10))		//TEST
+			if(prob(20))
 				var/reward = pick("construct","talisman")
 				switch (reward)
 					if("construct")
@@ -824,12 +845,12 @@ var/list/sacrificed = list()
 				if("wandfireball")
 					new /obj/item/weapon/gun/magic/wand/fireball(get_turf(src))
 				if("armor")
-					new /obj/item/clothing/head/magus(get_turf(src))
-					new /obj/item/clothing/suit/magusred(get_turf(src))
+					new /obj/item/clothing/head/cult/magus(get_turf(src))
+					new /obj/item/clothing/suit/cult/magusred(get_turf(src))
 					new /obj/item/clothing/shoes/cult/galoshes(get_turf(src))
 				if("space")
-					new /obj/item/clothing/head/helmet/space/cult(get_turf(src))
-					new /obj/item/clothing/suit/space/cult(get_turf(src))
+					new /obj/item/clothing/head/helmet/space/cult/construct(get_turf(src))
+					new /obj/item/clothing/suit/space/cult/construct(get_turf(src))
 					new /obj/item/clothing/shoes/cult/galoshes(get_turf(src))
 				if("vorpal")
 					new /obj/item/weapon/melee/cultblade/vorpal(get_turf(src))
@@ -936,7 +957,7 @@ var/list/sacrificed = list()
 			for(var/mob/living/carbon/C in orange(1,src))
 				if(iscultist(C) && !C.stat)
 					users+=C
-			if(users.len>=2)
+			if(users.len>=2 || check_equip())
 				var/mob/living/carbon/cultist = input("Choose the one who you want to free", "Followers of Geometer") as null|anything in (cultists - users)
 				if(!cultist)
 					return fizzle()
@@ -968,15 +989,23 @@ var/list/sacrificed = list()
 					cultist.loc:locked = 0
 				if(istype(cultist.loc, /obj/machinery/dna_scannernew)&&cultist.loc:locked)
 					cultist.loc:locked = 0
-				for(var/mob/living/carbon/C in users)
-					user.take_overall_damage(15, 0)
-					C.say("Khari[pick("'","`")]d! Gual'te nikka!")
-				del(src)
+				if(users.len>=2)
+					for(var/mob/living/carbon/C in users)
+						C.take_overall_damage(10/users.len, 0)
+						C.say("Khari[pick("'","`")]d! Gual'te nikka!")
+				else
+					user.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
+					user<<"\red You infuse your blood onto the blade to power up the spell."
+					user.take_overall_damage(10, 0)
+				//del(src)
 			return fizzle()
 
 /////////////////////////////////////////NINETEENTH RUNE
 
 		cultsummon()
+			if(active)
+				usr << "\red \i The rune needs time to stabilize."
+				return
 			var/mob/living/user = usr
 			var/list/mob/living/carbon/cultists = new
 			for(var/datum/mind/H in ticker.mode.cult)
@@ -986,7 +1015,7 @@ var/list/sacrificed = list()
 			for(var/mob/living/carbon/C in orange(1,src))
 				if(iscultist(C) && !C.stat)
 					users+=C
-			if(users.len>=2)
+			if(users.len>=2 || check_equip())
 				var/mob/living/carbon/cultist = input("Choose the one who you want to summon", "Followers of Geometer") as null|anything in (cultists - user)
 				if(!cultist)
 					return fizzle()
@@ -998,14 +1027,21 @@ var/list/sacrificed = list()
 				cultist.loc = src.loc
 				cultist.lying = 1
 				cultist.regenerate_icons()
-				for(var/mob/living/carbon/human/C in orange(1,src))
-					if(iscultist(C) && !C.stat)
-						C.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
-						C.take_overall_damage(25, 0)
+				if(users.len>=2)
+					for(var/mob/living/carbon/human/C in users)
+						if(iscultist(C) && !C.stat)
+							C.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
+							C.take_overall_damage(20/users.len, 0)
+				else
+					user.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
+					user<<"\red You infuse your blood onto the blade to power up the spell."
+					user.take_overall_damage(20, 0)
 				user.visible_message("\red Rune disappears with a flash of red light, and in its place now a body lies.", \
 				"\red You are blinded by the flash of red light! After you're able to see again, you see that now instead of the rune there's a body.", \
 				"\red You hear a pop and smell ozone.")
-				del(src)
+				active = 1
+				sleep(80)
+				active = 0
 			return fizzle()
 
 /////////////////////////////////////////TWENTIETH RUNES
@@ -1127,7 +1163,7 @@ var/list/sacrificed = list()
 				for(var/mob/living/carbon/human/C in orange(1,src))
 					if(iscultist(C) && !C.stat)
 						C.say("Dedo ol[pick("'","`")]btoh!")
-						C.take_overall_damage(15, 0)
+						C.take_overall_damage(45/culcount, 0)
 				del(src)
 			else
 				return fizzle()
@@ -1216,33 +1252,47 @@ var/list/sacrificed = list()
 			"\red You are blinded by the flash of red light! After you're able to see again, you see that you are now wearing a set of armor.")
 			
 			var/obj/item/slot_item = user.get_item_by_slot(slot_wear_suit)
-			if(slot_item && slot_item.type in typesof(/obj/item/clothing/suit/armor/hos,/obj/item/clothing/suit/armor/vest/capcarapace,/obj/item/clothing/suit/armor/swat,/obj/item/clothing/suit/armor/laserproof))
-				user.u_equip(slot_item)
-				del slot_item
-				user.equip_to_slot_or_del(new /obj/item/clothing/suit/magusred,slot_wear_suit)
-			else if(slot_item && slot_item.type in typesof(/obj/item/clothing/suit/space/rig,/obj/item/clothing/suit/space/captain))
-				user.u_equip(slot_item)
-				del slot_item
-				user.equip_to_slot_or_del(new /obj/item/clothing/suit/space/cult,slot_wear_suit)
+			if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/suit/cult,/obj/item/clothing/suit/space/cult)))
+				if(slot_item.type in typesof(/obj/item/clothing/suit/armor/hos,/obj/item/clothing/suit/armor/vest/capcarapace,/obj/item/clothing/suit/armor/swat,/obj/item/clothing/suit/armor/laserproof))
+					user.u_equip(slot_item)
+					del slot_item
+					user.equip_to_slot_or_del(new /obj/item/clothing/suit/cult/magusred,slot_wear_suit)
+				else if(slot_item.type in typesof(/obj/item/clothing/suit/space/rig,/obj/item/clothing/suit/space/captain))
+					user.u_equip(slot_item)
+					del slot_item
+					user.equip_to_slot_or_del(new /obj/item/clothing/suit/space/cult/construct,slot_wear_suit)
+				else if(slot_item.flags & THICKMATERIAL)	//bio,bomb,fire suit, covers all body, flag was intialy used for ling sting
+					user.u_equip(slot_item)
+					del slot_item
+					user.equip_to_slot_or_del(new /obj/item/clothing/suit/space/cult,slot_wear_suit)
+				else
+					user.u_equip(slot_item)
+					user.equip_to_slot_if_possible(new /obj/item/clothing/suit/cult/alt(get_turf(user)), slot_wear_suit,0,1,1)
 			else
-				user.u_equip(slot_item)
-				user.equip_to_slot_if_possible(new /obj/item/clothing/suit/cultrobes/alt(get_turf(user)), slot_wear_suit,0,1,1)
+				user.equip_to_slot_if_possible(new /obj/item/clothing/suit/cult/alt(get_turf(user)), slot_wear_suit,0,1,1)
 				
 			slot_item = user.get_item_by_slot(slot_head)
-			if(slot_item && istype(slot_item,/obj/item/clothing/head/helmet/space))
-				user.u_equip(slot_item)
-				del slot_item
-				user.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/space/cult,slot_head)
-			else if(slot_item && istype(slot_item,/obj/item/clothing/head/helmet))
-				user.u_equip(slot_item)
-				del slot_item
-				user.equip_to_slot_or_del(new /obj/item/clothing/head/magus,slot_head)
+			if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/head/cult,/obj/item/clothing/head/helmet/space/cult)))
+				if(slot_item.type in typesof(/obj/item/clothing/head/helmet/space/rig,/obj/item/clothing/head/helmet/space/capspace))
+					user.u_equip(slot_item)
+					del slot_item
+					user.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/space/cult/construct,slot_head)
+				else if(istype(slot_item,/obj/item/clothing/head/welding) || slot_item.flags & THICKMATERIAL)
+					user.u_equip(slot_item)
+					del slot_item
+					user.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/space/cult,slot_head)
+				else if(istype(slot_item,/obj/item/clothing/head/helmet))
+					user.u_equip(slot_item)
+					del slot_item
+					user.equip_to_slot_or_del(new /obj/item/clothing/head/cult/magus,slot_head)
+				else
+					user.u_equip(slot_item)
+					user.equip_to_slot_if_possible(new /obj/item/clothing/head/cult/alt(get_turf(user)), slot_head,0,1,1)
 			else
-				user.u_equip(slot_item)
-				user.equip_to_slot_if_possible(new /obj/item/clothing/head/culthood/alt(get_turf(user)), slot_head,0,1,1)
+				user.equip_to_slot_if_possible(new /obj/item/clothing/head/cult/alt(get_turf(user)), slot_head,0,1,1)
 				
 			slot_item = user.get_item_by_slot(slot_shoes)
-			if(slot_item && slot_item.type in typesof(/obj/item/clothing/shoes/galoshes,/obj/item/clothing/shoes/syndigaloshes,/obj/item/clothing/shoes/swat,/obj/item/clothing/shoes/space_ninja,/obj/item/clothing/shoes/cult/galoshes))
+			if(slot_item && !istype(slot_item,/obj/item/clothing/shoes/magboots) && slot_item.flags&NOSLIP)
 				user.u_equip(slot_item)
 				del slot_item
 				user.equip_to_slot_or_del(new /obj/item/clothing/shoes/cult/galoshes,slot_shoes)

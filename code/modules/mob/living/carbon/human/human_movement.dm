@@ -33,7 +33,8 @@
 /mob/living/carbon/human/Process_Spacemove(var/check_drift = 0)
 	//Can we act
 	if(restrained())	return 0
-
+	if(istype(wear_suit, /obj/item/clothing/suit/space/cult/construct))
+		return 1
 	//Do we have a working jetpack
 	if(istype(back, /obj/item/weapon/tank/jetpack))
 		var/obj/item/weapon/tank/jetpack/J = back
