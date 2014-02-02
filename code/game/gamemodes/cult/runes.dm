@@ -526,6 +526,12 @@ var/list/sacrificed = list()
 					T.info = "[R.word3]"
 					imbued_from = R
 					break
+				if(R.word1 == wordjoin && R.word2 == wordother && R.word3 == wordself) //summon cult
+					T = new(src.loc)
+					T.imbue = "sumcult"
+					T.uses = 2
+					imbued_from = R
+					break
 				if(R.word1==wordsee && R.word2==wordblood && R.word3==wordhell) //tome
 					T = new(src.loc)
 					T.imbue = "newtome"
@@ -1003,46 +1009,69 @@ var/list/sacrificed = list()
 /////////////////////////////////////////NINETEENTH RUNE
 
 		cultsummon()
-			if(active)
-				usr << "\red \i The rune needs time to stabilize."
-				return
 			var/mob/living/user = usr
-			var/list/mob/living/carbon/cultists = new
-			for(var/datum/mind/H in ticker.mode.cult)
-				if (istype(H.current,/mob/living/carbon))
-					cultists+=H.current
-			var/list/mob/living/carbon/users = new
-			for(var/mob/living/carbon/C in orange(1,src))
-				if(iscultist(C) && !C.stat)
-					users+=C
-			if(users.len>=2 || check_equip())
+			if(istype(src,/obj/effect/rune))
+				if(active)
+					user << "\red \i The rune needs time to stabilize."
+					return
+				var/list/mob/living/carbon/cultists = new
+				for(var/datum/mind/H in ticker.mode.cult)
+					if (istype(H.current,/mob/living/carbon))
+						cultists+=H.current
+				var/list/mob/living/carbon/users = new
+				for(var/mob/living/carbon/C in orange(1,src))
+					if(iscultist(C) && !C.stat)
+						users+=C
+				if(users.len>=2 || check_equip())
+					var/mob/living/carbon/cultist = input("Choose the one who you want to summon", "Followers of Geometer") as null|anything in (cultists - user)
+					if(!cultist)
+						return fizzle()
+					if (cultist == user) //just to be sure.
+						return
+					if(cultist.buckled || cultist.handcuffed || (!isturf(cultist.loc) && !istype(cultist.loc, /obj/structure/closet)))
+						user << "\red You cannot summon the [cultist], for his shackles of blood are strong"
+						return fizzle()
+					cultist.loc = src.loc
+					cultist.lying = 1
+					cultist.regenerate_icons()
+					if(users.len>=2)
+						for(var/mob/living/carbon/human/C in users)
+							if(iscultist(C) && !C.stat)
+								C.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
+								C.take_overall_damage(20/users.len, 0)
+					else
+						user.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
+						user<<"\red You infuse your blood onto the blade to power up the spell."
+						user.take_overall_damage(20, 0)
+					user.visible_message("\red Rune disappears with a flash of red light, and in its place now a body lies.", \
+					"\red You are blinded by the flash of red light! After you're able to see again, you see that now instead of the rune there's a body.", \
+					"\red You hear a pop and smell ozone.")
+					active = 1
+					sleep(80)
+					active = 0
+				else
+					return fizzle()
+			else	//Talisman form yay!
+				var/list/mob/living/carbon/cultists = new
+				for(var/datum/mind/H in ticker.mode.cult)
+					if (istype(H.current,/mob/living/carbon))
+						cultists+=H.current
 				var/mob/living/carbon/cultist = input("Choose the one who you want to summon", "Followers of Geometer") as null|anything in (cultists - user)
 				if(!cultist)
-					return fizzle()
+					return 0
 				if (cultist == user) //just to be sure.
-					return
+					return 0
 				if(cultist.buckled || cultist.handcuffed || (!isturf(cultist.loc) && !istype(cultist.loc, /obj/structure/closet)))
 					user << "\red You cannot summon the [cultist], for his shackles of blood are strong"
-					return fizzle()
-				cultist.loc = src.loc
+					return 0
+				cultist.loc = user.loc
 				cultist.lying = 1
 				cultist.regenerate_icons()
-				if(users.len>=2)
-					for(var/mob/living/carbon/human/C in users)
-						if(iscultist(C) && !C.stat)
-							C.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
-							C.take_overall_damage(20/users.len, 0)
-				else
-					user.say("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
-					user<<"\red You infuse your blood onto the blade to power up the spell."
-					user.take_overall_damage(20, 0)
-				user.visible_message("\red Rune disappears with a flash of red light, and in its place now a body lies.", \
-				"\red You are blinded by the flash of red light! After you're able to see again, you see that now instead of the rune there's a body.", \
-				"\red You hear a pop and smell ozone.")
-				active = 1
-				sleep(80)
-				active = 0
-			return fizzle()
+				user.whisper("N'ath reth sh'yro eth d[pick("'","`")]rekkathnor!")
+				user.take_overall_damage(20, 0)
+				user.visible_message("\red A body pops out of nowhere!")
+				return 1
+				
 
 /////////////////////////////////////////TWENTIETH RUNES
 

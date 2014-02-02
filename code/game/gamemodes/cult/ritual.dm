@@ -399,13 +399,13 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<b>Raise dead: </b>Destroy Join Other<br>
 				<b>Hide runes: </b>Hide See Blood<br>
 				<b>Reveal hidden runes: </b>Blood See Hide<br>
-				<b>Leave your body: </b>Hell travel self<br>
+				<b>Leave your body: </b>Hell Travel Self<br>
 				<b>Ghost Manifest: </b>Blood See Travel<br>
 				<b>Imbue a talisman: </b>Hell Technology Join<br>
 				<b>Sacrifice: </b>Hell Blood Join<br>
 				<b>Create a wall: </b>Destroy Travel Self<br>
 				<b>Summon cultist: </b>Join Other Self<br>
-				<b>Free a cultist: </b>Travel technology other<br>
+				<b>Free a cultist: </b>Travel Technology Other<br>
 				<b>Deafen: </b>Hide Other See<br>
 				<b>Blind: </b>Destroy See Other<br>
 				<b>Blood Boil: </b>Destroy See Blood<br>
@@ -413,6 +413,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<b>Stun: </b>Join Hide Technology<br>
 				<b>Summon Cultist Armor: </b>Hell Destroy Other<br>
 				<b>See Invisible: </b>See Hell Join<br>
+				<b>Shadow: </b>Hide See Technology<br>
 				</p>
 				<h2>Rune Descriptions</h2>
 				<h3>Teleport self</h3>
@@ -422,54 +423,74 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				<h3>Summon new tome</h3>
 				Invoking this rune summons a new arcane tome.
 				<h3>Convert a person</h3>
-				This rune opens target's mind to the realm of Nar-Sie, which usually results in this person joining the cult. However, some people (mostly the ones who posess high authority) have strong enough will to stay true to their old ideals. You will need 3 people chanting the invocation to convert a person or an enchanted cultist armor and sword. <br>
+				This rune opens target's mind to the realm of Nar-Sie, which usually results in this person joining the cult. However, some people (mostly the ones who posess high authority) have strong enough will to stay true to their old ideals.<br>
+				You will need 3 people chanting the invocation to convert a person <b>or an enchanted cultist armor and sword.</b><br>
 				<h3>Summon Nar-Sie</h3>
 				The ultimate rune. It summons the Avatar of Nar-Sie himself, tearing a huge hole in reality and consuming everything around it. Summoning it is the final goal of any cult.<br>
 				<h3>Disable Technology</h3>
-				Invoking this rune creates a strong electromagnetic pulse in a small radius, making it basically analogic to an EMP grenade. You can imbue this rune into a talisman, in this form you can attack object directly,you can hurt cyborgs and bots,disable cameras and even destory apc when fully charged,it can trigger an electromagnetic pulse based on charge left in the talisman.<br>
+				Invoking this rune creates a strong electromagnetic pulse in a small radius, making it basically analogic to an EMP grenade.<br>
+				You can imbue this rune into a talisman, <b>in this form you can attack object directly,</b>you can hurt cyborgs and bots,destroy cameras <b>and even destory apc when fully charged,</b>it can trigger an electromagnetic pulse based on charge left in the talisman.<br>
 				<h3>Drain Blood</h3>
 				This rune instantly heals you of some brute damage at the expense of a person placed on top of the rune. Whenever you invoke a drain rune, ALL drain runes on the station are activated, draining blood from anyone located on top of those runes. This includes yourself, though the blood you drain from yourself just comes back to you. This might help you identify this rune when studying words. One drain gives up to 25HP per each victim, but you can repeat it if you need more. Draining only works on living people, so you might need to recharge your "Battery" once its empty. Drinking too much blood at once might cause blood hunger.<br>
 				<h3>Raise Dead</h3>
-				This rune allows for the resurrection of any dead person. You will need a dead human body and a living human sacrifice. Make 2 raise dead runes. Put a living non-braindead human on top of one, and a dead body on the other one. When you invoke the rune, the life force of the living human will be transferred into the dead body, allowing a ghost standing on top of the dead body to enter it, instantly and fully healing it. Use other runes to ensure there is a ghost ready to be resurrected.<br>
+				This rune allows for the resurrection of any dead person.<br>
+				You will need a dead human body and a living human sacrifice.<br>
+				Make 2 raise dead runes.<br>
+				Put a living non-braindead human on top of one, and a dead body on the other one.<br>
+				When you invoke the rune, the life force of the living human will be transferred into the dead body, allowing a ghost standing on top of the dead body to enter it, instantly and fully healing it. Use other runes to ensure there is a ghost ready to be resurrected.<br>
 				<h3>Hide runes</h3>
 				This rune makes all nearby runes completely invisible. They are still there and will work if activated somehow, but you cannot invoke them directly if you do not see them.<br>
 				<h3>Reveal runes</h3>
 				This rune is made to reverse the process of hiding a rune. It reveals all hidden runes in a rather large area around it.
 				<h3>Leave your body</h3>
-				This rune gently rips your soul out of your body, leaving it intact. You can observe the surroundings as a ghost as well as communicate with other ghosts. Your body takes damage while you are there, so ensure your journey is not too long, or you might never come back.<br>
+				This rune gently rips your soul out of your body, leaving it intact. You can observe the surroundings as a ghost as well as communicate with other ghosts. <br>
+				Your body takes damage while you are there, so ensure your journey is not too long, or you might never come back.<br>
 				<h3>Manifest a ghost</h3>
-				Unlike the Raise Dead rune, this rune does not require any special preparations or vessels. Instead of using full lifeforce of a sacrifice, it will drain YOUR lifeforce. Stand on the rune and invoke it. If theres a ghost standing over the rune, it will materialise, and will live as long as you dont move off the rune or die. You can put a paper with a name on the rune to make the new body look like that person.<br>
+				Unlike the Raise Dead rune, this rune does not require any special preparations or vessels.<br>
+				Instead of using full lifeforce of a sacrifice, it will drain YOUR lifeforce. Stand on the rune and invoke it. If theres a ghost standing over the rune, it will materialise, and will live as long as you dont move off the rune or die. You can put a paper with a name on the rune to make the new body look like that person.<br>
 				<h3>Imbue a talisman</h3>
-				This rune allows you to imbue the magic of some runes into paper talismans. Create an imbue rune, then an appropriate rune beside it. Put an empty piece of paper on the imbue rune and invoke it. You will now have a one-use talisman with the power of the target rune. Using a talisman drains some health, so be careful with it. You can imbue a talisman with power of the following runes: summon tome, reveal, conceal, teleport, tisable technology, communicate, silence, blind and stun.<br>
+				This rune allows you to imbue the magic of some runes into paper talismans. <br>
+				Create an imbue rune, then an appropriate rune beside it. <br>
+				Put an empty piece of paper on the imbue rune and invoke it. <br>
+				You will now have a talisman with the power of the target rune. Using a talisman drains some health, so be careful with it. You can imbue a talisman with power of the following runes: summon tome, reveal, conceal, teleport, tisable technology, communicate, silence, blind and stun.<br>
 				<h3>Sacrifice</h3>
-				Sacrifice rune allows you to sacrifice a living thing or a body to the Geometer of Blood. Monkeys and dead humans are the most basic sacrifices, they might or might not be enough to gain His favor. A living human is what a real sacrifice should be, however, you will need 3 people chanting the invocation to sacrifice a living person or an enchanted cultist armor and sword. If you collect all words throght this he will reward you generously.
+				Sacrifice rune allows you to sacrifice a living thing or a body to the Geometer of Blood. Monkeys and dead humans are the most basic sacrifices, they might or might not be enough to gain His favor.<br>
+				A living human is what a real sacrifice should be, however, you will need 3 people chanting the invocation to sacrifice a living person <b>or an enchanted cultist armor and sword. <br><br>
+				If you collect all words throught this he will reward you generously.</b>
 				<h3>Create a wall</h3>
 				Invoking this rune solidifies the air above it, creating an an invisible wall. To remove the wall, simply invoke the rune again.
 				<h3>Summon cultist</h3>
-				This rune allows you to summon a fellow cultist to your location. The target cultist must be unhandcuffed ant not buckled to anything. You also need to have 2 people chanting at the rune to successfully invoke it or an enchanted cultist armor and sword. Invoking it takes a strain on the bodies of all chanting cultists.<br>
+				This rune allows you to summon a fellow cultist to your location. The target cultist must be unhandcuffed ant not buckled to anything.<br>
+				You also need to have 2 people chanting at the rune to successfully invoke it <b>or an enchanted cultist armor and sword.</b> Invoking it takes a strain on the bodies of all chanting cultists.<br>
 				<h3>Free a cultist</h3>
-				This rune unhandcuffs and unbuckles any cultist of your choice, no matter where he is.You also need to have 2 people chanting at the rune to successfully invoke it or an enchanted cultist armor and sword. Invoking it takes a light strain on the bodies of all chanting cultists.<br>
+				This rune unhandcuffs and unbuckles any cultist of your choice, no matter where he is.<br>
+				You also need to have 2 people chanting at the rune to successfully invoke it <b>or an enchanted cultist armor and sword.</b> Invoking it takes a light strain on the bodies of all chanting cultists.<br>
 				<h3>Silence</h3>
 				This rune temporarily silence and deafen all non-cultists around you.<br>
 				<h3>Blind</h3>
 				This rune temporarily blinds all non-cultists around you. Very robust. Use together with the silence rune to leave your enemies completely helpless.<br>
 				<h3>Blood boil</h3>
-				This rune boils the blood all non-cultists in visible range. The damage is enough to instantly critically hurt any person. You need 3 cultists invoking the rune for it to work. This rune is unreliable and may cause unpredicted effect when invoked. It also drains significant amount of your health when successfully invoked.<br>
+				This rune boils the blood all non-cultists in visible range. The damage is enough to instantly critically hurt any person.<br>
+				You need 3 cultists invoking the rune for it to work. This rune is unreliable and may cause unpredicted effect when invoked. It also drains significant amount of your health when successfully invoked.<br>
 				<h3>Communicate</h3>
 				Invoking this rune allows you to relay a message to all cultists on the station and nearby space objects.
 				<h3>Stun</h3>
 				Unlike other runes, this ons is supposed to be used in talisman form. When invoked directly, it simply releases some dark energy, briefly stunning everyone around. When imbued into a talisman, you can force all of its energy into one person, stunning him so hard he cant even speak. However, effect wears off rather fast.<br>
 				<h3>Equip Armor</h3>
-				When this rune is invoked, either from a rune or a talisman, it will equip the user with the armor of the followers of Nar-Sie. To use this rune to its fullest extent, have helmet, armor or rig equipped and it will be transmuted to the cult equivalent. You need hood,robe,boots and sword to utilize the sacrifice and convert runes freely.>
-				Recepies for transmutaion are as follows: 
-				Any hardsuit suit/helmet for the cult hardsuit; 
-				Captain's Carapace,HoS coat,ablative armor for reflective cult armor; 
-				Any thick suit like firsuit,bomb suit,bio suit for a space worthy cult suit; 
-				A helmet for cult helmet; 
-				A hood that covers the whole head like bio or bomb hood for a space worthy helmet; 
-				Footwear that doesn't slip for special boots.
+				When this rune is invoked, either from a rune or a talisman, it will equip the user with the armor of the followers of Nar-Sie. To use this rune to its fullest extent, have helmet, armor or rig equipped and it will be transmuted to the cult equivalent. <br>
+				<b>You need hood,robes,boots or cult transmuted equivalent and sword to utilize the sacrifice and convert runes freely.<br><br>
+				<i>Recepies for transmutaion are as follows: </i></b><br>
+				Any hardsuit suit/helmet for the cult hardsuit; <br>
+				Captain's Carapace,HoS coat,ablative armor for reflective cult armor; <br>
+				Any thick suit like firsuit,bomb suit,bio suit for a space worthy cult suit; <br>
+				A helmet for cult helmet; <br>
+				A hood that covers the whole head like bio or bomb hood for a space worthy helmet; <br>
+				Footwear that doesn't slip for special boots.<br>
 				<h3>See Invisible</h3>
 				When invoked when standing on it, this rune allows the user to see the the world beyond as long as he does not move.<br>
+				<h3>Shadow</h3>
+				With this rune you can cloak an area invisible to the outside of that area,only inside can you see.I will cloak any body and the result of slaughter as well as runes.<br>
+				It will constantly drain a cultist in that area. To change the cultist that is being drained just invoke the rune again.<br>
 				</body>
 				</html>
 				"}

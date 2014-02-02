@@ -30,7 +30,7 @@
 
 /obj/item/weapon/melee/ironslayer
 	name = "Jack's katana"
-	desc = "The sword of a samurai from the past that was sent to the future where he was slained by Nar-Sie. Goes throght metal like butter."
+	desc = "The sword of a samurai from the past that was sent to the future where he was slain by Nar-Sie. Goes through metal like butter."
 	icon_state = "katana"
 	item_state = "katana"
 	flags = CONDUCT | USEDELAY
@@ -41,8 +41,8 @@
 	hitsound = 'sound/weapons/bladeslice.ogg'
 	attack_verb = list("slashed", "sliced", "torn", "ripped", "diced", "cut")
 	
-/obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, click_parameters)
-	if(target.Adjacent(user))
+/obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, proximity_flag, click_parameters)
+	if(proximity_flag)
 		var/name = target.name
 		var/capture = 0
 		if(istype(target,/obj/mecha))
@@ -328,7 +328,7 @@
 	name = "construct styled hardsuit"
 	icon_state = "cult_rig"
 	item_state = "cult_rig"
-	desc = "A powerful suit enchanted with Nar-Sie's wisdom. It can thread throgh space with no fear."
+	desc = "A powerful suit enchanted with Nar-Sie's wisdom. It can thread through space with no fear."
 	w_class = 4
 	allowed = list(/obj/item/weapon/tome,/obj/item/weapon/melee/cultblade,/obj/item/weapon/tank)
 	slowdown = 1

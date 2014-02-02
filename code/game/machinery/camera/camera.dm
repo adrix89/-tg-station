@@ -55,7 +55,7 @@
 
 /obj/machinery/camera/emp_act(severity)
 	if(!isEmpProof())
-		if(prob(100/severity))
+		if(prob(100/severity) && status)	//no point in alaraming a disabled camera
 			icon_state = "[initial(icon_state)]emp"
 			var/list/previous_network = network
 			network = list()

@@ -24,10 +24,12 @@
 				if("conceal")
 					call(/obj/effect/rune/proc/obscure)(2)
 				if("revealrunes")
-					call(/obj/effect/rune/proc/revealrunes)(1+uses,src)
-					uses = 0
+					call(/obj/effect/rune/proc/revealrunes)(3,src)
 				if("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
 					call(/obj/effect/rune/proc/teleport)(imbue)
+				if("sumcult")
+					//If the user cancels the talisman this var will be set to 0
+					delete = call(/obj/effect/rune/proc/cultsummon)()
 				if("communicate")
 					//If the user cancels the talisman this var will be set to 0
 					delete = call(/obj/effect/rune/proc/communicate)()
@@ -76,13 +78,17 @@
 		else
 			..()
 			
-	preattack(atom/O as obj|mob, mob/living/user as mob, proximity_flag)
+	preattack(atom/O as obj|mob, mob/living/user as mob, proximity_flag, click_parameters)
 		. = 1	//Return 1 on delete
-		if(O.Adjacent(user) && iscultist(user))
+		if(proximity_flag && iscultist(user))
 			if(imbue == "emp")
+				var/location = O.loc
 				if(istype(O, /obj/machinery/camera))
 					var/obj/machinery/camera/cam = O
-					cam.deactivate(null)
+					cam.deactivate(user,2)
+					cam.visible_message("\blue The camera has blown up!")
+					location = O.loc
+					del cam
 				else if(istype(O, /obj/machinery/bot))
 					var/obj/machinery/bot/bot = O
 					bot.explode()
@@ -93,31 +99,20 @@
 					apc.visible_message("\blue The apc has blown up!")
 					user.drop_item(src)
 					uses = 0
-				else 
+				else if(isturf(location))
 					O.emp_act(1)	//emp the rest
+				else
+					return 0
 				var/datum/effect/effect/system/spark_spread/spark_system = new /datum/effect/effect/system/spark_spread()
-				spark_system.set_up(5, 0, O.loc)
+				spark_system.set_up(5, 0,location)
 				spark_system.start()
-				playsound(O.loc, "sparks", 50, 1)
+				playsound(location, "sparks", 50, 1)
 				uses--
 				if(uses <=0)
 					user.drop_item(src)
 					del(src)
 				else
 					usr << "\red Your emp talisman has [uses] charge left."
-				return 1
-			if(imbue == "revealrunes")
-				var/obj/effect/rune/R = locate() in get_turf(O)
-				if(R)
-					R.invisibility=0
-					usr <<"\red A rune is revealed!"
-					uses--
-					if(uses <=0)
-						usr << "\red Your talisman turns into red dust."
-						user.drop_item(src)
-						del(src)
-					else
-						usr << "\red Your reveal talisman has [uses] charge left."
 				return 1
 		return 0
 
@@ -133,9 +128,10 @@
 		dat += "<HR>"
 		dat += "<A href='?src=\ref[src];rune=newtome'>N'ath reth sh'yro eth d'raggathnor!</A> - Summon a new arcane tome.<BR>"
 		dat += "<A href='?src=\ref[src];rune=teleport'>Sas'so c'arta forbici!</A> - Allows you to move to a rune with the same last word.<BR>"
-		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology in a short range. (3 charge)<BR>"
-		dat += "<A href='?src=\ref[src];rune=conceal'>Kla'atu barada nikt'o!</A> - Allows you to conceal the runes you placed on the floor. (2 uses)<BR>"
-		dat += "<A href='?src=\ref[src];rune=reveal'>Nikt'o barada kla'atu!</A> - Allows you to reveal the runes in a short range. (3 charge)<BR>"
+		dat += "<A href='?src=\ref[src];rune=sumcult'>N'ath reth sh'yro eth d'rekkathnor!</A> - Allows you to summon one of your cult brothers at a cost. (2 uses)<BR>"
+		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology in a short range.You can also attack directly. (3 charge)<BR>"
+		dat += "<A href='?src=\ref[src];rune=conceal'>Kla'atu barada nikt'o!</A> - Allows you to conceal the runes you placed on the floor. (3 uses)<BR>"
+		dat += "<A href='?src=\ref[src];rune=reveal'>Nikt'o barada kla'atu!</A> - Allows you to reveal the runes in a short range. (3 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=communicate'>O bidai nabora se'sma!</A> - Allows you to coordinate with others of your cult. (4 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=runestun'>Fuu ma'jin</A> - Allows you to stun a person by attacking them with the talisman.<BR>"
 		dat += "<A href='?src=\ref[src];rune=armor'>Sa tatha najin</A> - Allows you to summon armoured robes and an unholy blade<BR>"
@@ -160,6 +156,11 @@
 					usr.put_in_hands(T)
 					T.imbue = dest
 					T.info = "[T.imbue]"
+				if("sumcult")
+					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
+					usr.put_in_hands(T)
+					T.imbue = "sumcult"
+					T.uses = 2
 				if("emp")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
@@ -169,7 +170,7 @@
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "conceal"
-					T.uses = 2
+					T.uses = 3
 				if("reveal")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
