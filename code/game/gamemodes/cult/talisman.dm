@@ -61,18 +61,11 @@
 	attack(mob/living/T as mob, mob/living/user as mob)
 		if(iscultist(user))
 			if(imbue == "runestun")
+				add_logs(user,T, "stunned", admin=0,object=src,addition=" stun talisman")
 				user.take_organ_damage(5, 0)
 				call(/obj/effect/rune/proc/runestun)(T)
 				user.drop_item(src)
 				del(src)
-			else if(imbue == "emp")
-				if(isrobot(T))
-					T.emp_act(1)
-					T.take_organ_damage(30)	//emp act + this = 50 damage total
-					uses--
-				if(uses <=0)
-					user.drop_item(src)
-					del(src)
 			else
 				..()   ///If its some other talisman, use the generic attack code, is this supposed to work this way?
 		else
@@ -83,7 +76,13 @@
 		if(proximity_flag && iscultist(user))
 			if(imbue == "emp")
 				var/location = O.loc
-				if(istype(O, /obj/machinery/camera))
+				
+				if(isrobot(O))
+					var/mob/living/T = O
+					add_logs(user,O, "attacked", admin=0,object=src,addition=" emp talisman")
+					T.emp_act(1)
+					T.take_organ_damage(30)	//emp act + this = 50 damage total)
+				else if(istype(O, /obj/machinery/camera))
 					var/obj/machinery/camera/cam = O
 					cam.deactivate(user,2)
 					cam.visible_message("\blue The camera has blown up!")

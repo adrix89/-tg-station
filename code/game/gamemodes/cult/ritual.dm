@@ -150,7 +150,7 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			user << "<span class='notice'>You disrupt the vile magic with the deadening field of the null rod!</span>"
 			del(src)
 			return
-		else if(istype(I, /obj/item/weapon/melee/cultblade))
+		else if(istype(I, /obj/item/weapon/melee/cultblade) || istype(I, /obj/item/weapon/tome))
 			attack_hand(user)
 		return
 
@@ -480,11 +480,11 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 				When this rune is invoked, either from a rune or a talisman, it will equip the user with the armor of the followers of Nar-Sie. To use this rune to its fullest extent, have helmet, armor or rig equipped and it will be transmuted to the cult equivalent. <br>
 				<b>You need hood,robes,boots or cult transmuted equivalent and sword to utilize the sacrifice and convert runes freely.<br><br>
 				<i>Recepies for transmutaion are as follows: </i></b><br>
-				Any hardsuit suit/helmet for the cult hardsuit; <br>
+				Any rig suit/helmet for the cult hardsuit; <br>
 				Captain's Carapace,HoS coat,ablative armor for reflective cult armor; <br>
 				Any thick suit like firsuit,bomb suit,bio suit for a space worthy cult suit; <br>
 				A helmet for cult helmet; <br>
-				A hood that covers the whole head like bio or bomb hood for a space worthy helmet; <br>
+				A headgear that covers the whole head like welder mask or bio,rad,space,bomb hood for a space worthy helmet; <br>
 				Footwear that doesn't slip for special boots.<br>
 				<h3>See Invisible</h3>
 				When invoked when standing on it, this rune allows the user to see the the world beyond as long as he does not move.<br>

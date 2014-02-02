@@ -51,9 +51,11 @@
 			capture = 1
 		else if(isrobot(target))
 			var/mob/living/silicon/S = target
+			add_logs(user,target, "killed", admin=1,object=src)
 			S.gib()		//robot slayer
 			capture = 1
 		else if(istype(target,/mob/living/silicon/ai))
+			add_logs(user,target, "killed", admin=1,object=src)
 			target.ex_act(1)
 			capture = 1
 		else if(istype(target,/obj/machinery/bot))
