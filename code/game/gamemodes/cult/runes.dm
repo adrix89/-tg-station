@@ -806,13 +806,8 @@ var/list/sacrificed = list()
 				
 		lesser_reward(var/mob/T)
 			if(prob(20))
-				var/reward = pick("construct","talisman")
-				switch (reward)
-					if("construct")
-						new /obj/structure/constructshell(get_turf(src))
-					if("talisman")		//one use talisman
-						var/obj/item/weapon/paper/talisman/supply/tal = new /obj/item/weapon/paper/talisman/supply(get_turf(src))
-						tal.uses = 1
+				var/obj/item/weapon/paper/talisman/supply/tal = new /obj/item/weapon/paper/talisman/supply(get_turf(src))
+				tal.uses = rand(1,3)
 						
 		greater_reward(var/mob/T)
 			var/reward = pick("fireball","smoke","blind","mindswap","forcewall","knock","charge", "wanddeath", "wandresurrection", "wandpolymorph", "wandteleport", "wanddoor", "wandfireball", "armor", "space", "scrying","vorpal","ironslayer")
@@ -1192,7 +1187,7 @@ var/list/sacrificed = list()
 				for(var/mob/living/carbon/human/C in orange(1,src))
 					if(iscultist(C) && !C.stat)
 						C.say("Dedo ol[pick("'","`")]btoh!")
-						C.take_overall_damage(45/culcount, 0)
+						C.take_overall_damage(60/culcount, 0)
 				del(src)
 			else
 				return fizzle()
