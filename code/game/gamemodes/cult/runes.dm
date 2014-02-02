@@ -141,7 +141,7 @@ var/list/sacrificed = list()
 					return 0
 				else if(isloyal(M))
 					ticker.mode.support += M.mind
-					M.mind.special_role = "traitor"
+					M.mind.special_role = "Cultist"
 					ticker.mode.update_cult_icons_added(M.mind)
 					var/datum/objective/survive/survive = new
 					survive.owner = M.mind

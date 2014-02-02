@@ -67,7 +67,7 @@
 			T.die()
 			capture = 1
 		else if(istype(target, /turf/simulated/wall/r_wall))
-			if(prob(12))
+			if(prob(15))
 				var/turf/simulated/wall/W = target
 				playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
 				W.dismantle_wall(0,1)
