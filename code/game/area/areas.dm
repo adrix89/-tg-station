@@ -254,16 +254,6 @@
 			master.used_light += amount
 		if(ENVIRON)
 			master.used_environ += amount
-
-/area/Exited(A)
-	if(src.master.shadow)
-		if(isliving(A))
-			var/mob/living/L = A
-			var/obj/effect/rune/R = src.master.shadow_rune
-			R.shadow_mobs -= L
-			L.invisibility =initial(L.invisibility)
-			L.see_override = 0
-			L.see_invisible =initial(L.see_invisible)
 	
 	
 /area/Entered(A)
