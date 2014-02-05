@@ -30,7 +30,7 @@
 
 /obj/item/weapon/melee/ironslayer
 	name = "Jack's katana"
-	desc = "The sword of a samurai from the past that was sent to the future where he was slain by Nar-Sie. Goes through metal like butter."
+	desc = "The blade of a samurai from the past, he was plunged into the future by a great evil and was on a quest to return back to the past. Nar-Sie manged to get ahold of his blade... Goes through metal like butter."
 	icon_state = "katana"
 	item_state = "katana"
 	flags = CONDUCT | USEDELAY
@@ -38,6 +38,7 @@
 	force = 10
 	throwforce = 10
 	w_class = 4
+	var/active = 0
 	hitsound = 'sound/weapons/bladeslice.ogg'
 	attack_verb = list("slashed", "sliced", "torn", "ripped", "diced", "cut")
 	
@@ -47,16 +48,23 @@
 		var/capture = 0
 		if(istype(target,/obj/mecha))
 			var/obj/mecha/mech = target
-			mech.take_damage(120)	//mech slayer
+			mech.take_damage(150)	//mech slayer
 			capture = 1
 		else if(isrobot(target))
 			var/mob/living/silicon/S = target
-			add_logs(user,target, "killed", admin=1,object=src)
-			S.gib()		//robot slayer
+			add_logs(user,target, "killing", admin=1,object=src)
+			if(S.health <= -25)
+				S.gib()		//robot slayer
+			else 
+				S.adjustBruteLoss(75)
 			capture = 1
 		else if(istype(target,/mob/living/silicon/ai))
-			add_logs(user,target, "killed", admin=1,object=src)
-			target.ex_act(1)
+			var/mob/living/silicon/S = target
+			add_logs(user,target, "killing", admin=1,object=src)
+			if(S.health <= -25)
+				S.gib()		//ai slayer
+			else 
+				S.adjustBruteLoss(75)
 			capture = 1
 		else if(istype(target,/obj/machinery/bot))
 			var/obj/machinery/bot/B = target
@@ -67,25 +75,22 @@
 			T.die()
 			capture = 1
 		else if(istype(target, /turf/simulated/wall/r_wall))
-			if(prob(15))
-				var/turf/simulated/wall/W = target
-				playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
+			var/turf/simulated/wall/W = target
+			if(spec_attack(user,6))
 				W.dismantle_wall(0,1)
-			capture = 1
+			return 1
 		else if(istype(target, /turf/simulated/wall))
-			if(prob(30))
-				var/turf/simulated/wall/W = target
-				playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
+			var/turf/simulated/wall/W = target
+			if(spec_attack(user,3))
 				W.dismantle_wall(0,1)
-			capture = 1
+			return 1
 			
 		else if(istype(target,/obj/machinery/door/airlock))
 			var/obj/machinery/door/airlock/D = target
 			if(!D.glass && !(D.doortype in list(9,26,28,29,30,33)))		//only destroy metal doors,and no vault/AI
-				if(prob(25))
-					playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
+				if(spec_attack(user,4))
 					del D
-				capture = 1
+				return 1
 		else if(target.type in typesof(/obj/machinery/door/poddoor/shutters,/obj/machinery/portable_atmospherics/canister,/obj/structure/rack,/obj/structure/table,/obj/structure/girder,/obj/structure/grille,/obj/structure/closet))
 			target.ex_act(2)
 			capture = 1
@@ -104,6 +109,20 @@
 			return 0
 	return 0
 	
+/obj/item/weapon/melee/ironslayer/proc/spec_attack(var/mob/living/user,var/cycle)
+	active += 1
+	var/this_active = active
+	var/location = user.loc
+	var/spec_verbs = list("Hora! Hora! Hora!","KaPOW!","Chop! Chop!","WATchaoa","Jack Jack Jack...","saMurai Jack")
+	for(var/i=0,i<cycle,i++)
+		playsound(loc, 'sound/weapons/bladeslice.ogg', 50, 1, -1)
+		user.visible_message("\red \b [pick(spec_verbs)]")
+		sleep(12)
+		if(location != user.loc || active!=this_active)
+			return 0
+	playsound(user.loc, 'sound/items/Deconstruct.ogg', 80, 1)
+	active = 0
+	return 1
 		
 /obj/item/weapon/melee/cultblade/vorpal
 	name = "Vorpal blade"

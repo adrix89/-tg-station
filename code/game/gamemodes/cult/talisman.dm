@@ -15,28 +15,28 @@
 			var/delete = 1
 			switch(imbue)
 				if("newtome")
-					call(/obj/effect/rune/proc/tomesummon)()
+					call(/obj/effect/rune/tomesummon/invoke)()
 				if("armor")
-					call(/obj/effect/rune/proc/armor)()
+					call(/obj/effect/rune/armor/invoke)()
 				if("emp")
-					call(/obj/effect/rune/proc/emp)(usr.loc,1+uses)
+					call(/obj/effect/rune/emp/invoke)(usr.loc,1+uses)
 					uses = 0
 				if("conceal")
-					call(/obj/effect/rune/proc/obscure)(2)
+					call(/obj/effect/rune/obscure/invoke)(2)
 				if("revealrunes")
-					call(/obj/effect/rune/proc/revealrunes)(3,src)
+					call(/obj/effect/rune/revealrunes/invoke)(3,src)
 				if("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
-					call(/obj/effect/rune/proc/teleport)(imbue)
+					call(/obj/effect/rune/teleport/invoke)(imbue)
 				if("sumcult")
 					//If the user cancels the talisman this var will be set to 0
-					delete = call(/obj/effect/rune/proc/cultsummon)()
+					delete = call(/obj/effect/rune/cultsummon/invoke)()
 				if("communicate")
 					//If the user cancels the talisman this var will be set to 0
-					delete = call(/obj/effect/rune/proc/communicate)()
+					delete = call(/obj/effect/rune/communicate/invoke)()
 				if("silence")
-					call(/obj/effect/rune/proc/silence)()
+					call(/obj/effect/rune/silence/invoke)()
 				if("blind")
-					call(/obj/effect/rune/proc/blind)()
+					call(/obj/effect/rune/blind/invoke)()
 				if("runestun")
 					user << "\red To use this talisman, attack your target directly."
 					return
@@ -63,7 +63,7 @@
 			if(imbue == "runestun")
 				add_logs(user,T, "stunned", admin=0,object=src,addition=" stun talisman")
 				user.take_organ_damage(5, 0)
-				call(/obj/effect/rune/proc/runestun)(T)
+				call(/obj/effect/rune/runestun/invoke)(T)
 				user.drop_item(src)
 				del(src)
 			else
