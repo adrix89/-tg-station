@@ -149,12 +149,15 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 	return
 
 /obj/effect/rune/attackby(I as obj, user as mob)
-	/*No more rune limit, runes are now permanent
+	//*No more rune limit, runes are now permanent
 	if(istype(I, /obj/item/weapon/tome) && iscultist(user))
 		user << "<span class='notice'>You retrace your steps, carefully undoing the lines of the rune.</span>"
+		/*
+		R.blood_DNA = list()
+		R.blood_DNA[H.dna.unique_enzymes] = H.dna.blood_type*/
 		del(src)
 		return
-	*/
+	
 	if(istype(I, /obj/item/weapon/nullrod))
 		user << "<span class='notice'>You disrupt the vile magic with the deadening field of the null rod!</span>"
 		del(src)
@@ -187,61 +190,6 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			invoke(src.word3)
 		else
 			return invoke()
-	/*
-	if(word1 == wordtravel && word2 == wordself)
-		return teleport(src.word3)
-	if(word1 == wordsee && word2 == wordblood && word3 == wordhell)
-		return tomesummon()
-	if(word1 == wordhell && word2 == worddestr && word3 == wordother)
-		return armor()
-	if(word1 == wordjoin && word2 == wordblood && word3 == wordself)
-		return convert()
-	if(word1 == wordhell && word2 == wordjoin && word3 == wordself)
-		return tearreality()
-	if(word1 == worddestr && word2 == wordsee && word3 == wordtech)
-		return emp(src.loc,4)
-	if(word1 == wordtravel && word2 == wordblood && word3 == wordself)
-		return drain()
-	if(word1 == wordsee && word2 == wordhell && word3 == wordjoin)
-		return seer()
-	if(word1 == worddestr && word2 == wordjoin && word3 == wordother)
-		return raise()
-	if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
-		return obscure(4)
-	if(word1 == wordhell && word2 == wordtravel && word3 == wordself)
-		return ajourney()
-	if(word1 == wordblood && word2 == wordsee && word3 == wordtravel)
-		return manifest()
-	if(word1 == wordhell && word2 == wordtech && word3 == wordjoin)
-		return talisman()
-	if(word1 == wordhell && word2 == wordblood && word3 == wordjoin)
-		return sacrifice()
-	if(word1 == wordblood && word2 == wordsee && word3 == wordhide)
-		return revealrunes(6,src)
-	if(word1 == worddestr && word2 == wordtravel && word3 == wordself)
-		return wall()
-	if(word1 == wordtravel && word2 == wordtech && word3 == wordother)
-		return freedom()
-	if(word1 == wordjoin && word2 == wordother && word3 == wordself)
-		return cultsummon()
-	if(word1 == wordhide && word2 == wordother && word3 == wordsee)
-		return silence()
-	if(word1 == worddestr && word2 == wordsee && word3 == wordother)
-		return blind()
-	if(word1 == worddestr && word2 == wordsee && word3 == wordblood)
-		return bloodboil()
-	if(word1 == wordself && word2 == wordother && word3 == wordtech)
-		return communicate()
-	if(word1 == wordtravel && word2 == wordother)
-		return itemport(src.word3)
-	if(word1 == wordjoin && word2 == wordhide && word3 == wordtech)
-		return runestun()
-	if(word1 == wordhide && word2 == wordsee && word3 == wordtech)
-		return shadow()
-	
-	user.take_overall_damage(20, 0)
-	user << "<span class='danger'>You feel the life draining from you, as if Lord Nar-Sie is displeased with you. Better not mess with it again.</span>"
-	*/
 	return
 
 
@@ -272,31 +220,6 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 			invoke(src.word3)
 	if(src.type in list(/obj/effect/rune/runestun,/obj/effect/rune/blind,/obj/effect/rune/silence,/obj/effect/rune/communicate,/obj/effect/rune/wall))
 		invoke()
-			
-	/*
-	if(word1 == wordtravel && word2 == wordself)
-		return teleport(src.word3)
-	if(word1 == worddestr && word2 == wordsee && word3 == wordtech)
-		return emp(src.loc,3)
-	if(word1 == wordsee && word2 == wordhell && word3 == wordjoin)
-		return seer()
-	if(word1 == wordhide && word2 == wordsee && word3 == wordblood)
-		return obscure(4)
-	if(word1 == wordblood && word2 == wordsee && word3 == wordhide)
-		return revealrunes(6,src)
-	if(word1 == worddestr && word2 == wordtravel && word3 == wordself)
-		return wall()
-	if(word1 == wordhide && word2 == wordother && word3 == wordsee)
-		return silence()
-	if(word1 == worddestr && word2 == wordsee && word3 == wordother)
-		return blind()
-	if(word1 == wordself && word2 == wordother && word3 == wordtech)
-		return communicate()
-	if(word1 == wordtravel && word2 == wordother)
-		return itemport(src.word3)
-	if(word1 == wordjoin && word2 == wordhide && word3 == wordtech)
-		return runestun()
-	*/
 	return
 	
 /obj/effect/rune/convert
@@ -905,9 +828,7 @@ var/list/rune_dict_paths = list(
 	if(user)
 		if (!istype(user.loc,/turf))
 			user << "\red You do not have enough space to write a proper rune."
-		/*
-		var/list/runes = list("teleport", "teleport other", "tome", "armor", "convert", "tear in reality", "emp", "drain", "seer", "raise", "hide", "reveal", "astral journey", "manifest", "imbue talisman", "sacrifice", "wall", "freedom", "cultsummon", "silence", "blind", "bloodboil", "communicate", "stun", "shadow")
-		*/
+			
 		var/word_dict = list("travel" = wordtravel, "blood" = wordblood, "join" = wordjoin, "hell" = wordhell, "destroy" = worddestr, "technology" = wordtech, "self" = wordself, "see" = wordsee, "other" = wordother, "hide" = wordhide)
 		var/list/unkwords = list("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
 		var/chosen_rune = null
@@ -932,164 +853,3 @@ var/list/rune_dict_paths = list(
 		else
 			R.word3 = word_dict[rune_dict[chosen_rune][3]]
 		//check_icon()
-		/*
-		switch(r)
-			if("teleport")
-				var/list/words = list("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
-				var/beacon
-				if(usr)
-					beacon = input("Select the last rune", "Rune Scribing") in words
-				R.word1=wordtravel
-				R.word2=wordself
-				R.word3=beacon
-				R.loc = user.loc
-				R.check_icon()
-			if("teleport other")
-				var/list/words = list("ire", "ego", "nahlizet", "certum", "veri", "jatkaa", "balaq", "mgar", "karazet", "geeri")
-				var/beacon
-				if(usr)
-					beacon = input("Select the last rune", "Rune Scribing") in words
-				R.word1=wordtravel
-				R.word2=wordother
-				R.word3=beacon
-				R.loc = user.loc
-				R.check_icon()
-			if("tome")
-				R.word1=wordsee
-				R.word2=wordblood
-				R.word3=wordhell
-				R.loc = user.loc
-				R.check_icon()
-			if("armor")
-				R.word1=wordhell
-				R.word2=worddestr
-				R.word3=wordother
-				R.loc = user.loc
-				R.check_icon()
-			if("convert")
-				R.word1=wordjoin
-				R.word2=wordblood
-				R.word3=wordself
-				R.loc = user.loc
-				R.check_icon()
-			if("tear in reality")
-				R.word1=wordhell
-				R.word2=wordjoin
-				R.word3=wordself
-				R.loc = user.loc
-				R.check_icon()
-			if("emp")
-				R.word1=worddestr
-				R.word2=wordsee
-				R.word3=wordtech
-				R.loc = user.loc
-				R.check_icon()
-			if("drain")
-				R.word1=wordtravel
-				R.word2=wordblood
-				R.word3=wordself
-				R.loc = user.loc
-				R.check_icon()
-			if("seer")
-				R.word1=wordsee
-				R.word2=wordhell
-				R.word3=wordjoin
-				R.loc = user.loc
-				R.check_icon()
-			if("raise")
-				R.word1=worddestr
-				R.word2=wordjoin
-				R.word3=wordother
-				R.loc = user.loc
-				R.check_icon()
-			if("hide")
-				R.word1=wordhide
-				R.word2=wordsee
-				R.word3=wordblood
-				R.loc = user.loc
-				R.check_icon()
-			if("astral journey")
-				R.word1=wordhell
-				R.word2=wordtravel
-				R.word3=wordself
-				R.loc = user.loc
-				R.check_icon()
-			if("manifest")
-				R.word1=wordblood
-				R.word2=wordsee
-				R.word3=wordtravel
-				R.loc = user.loc
-				R.check_icon()
-			if("imbue talisman")
-				R.word1=wordhell
-				R.word2=wordtech
-				R.word3=wordjoin
-				R.loc = user.loc
-				R.check_icon()
-			if("sacrifice")
-				R.word1=wordhell
-				R.word2=wordblood
-				R.word3=wordjoin
-				R.loc = user.loc
-				R.check_icon()
-			if("reveal")
-				R.word1=wordblood
-				R.word2=wordsee
-				R.word3=wordhide
-				R.loc = user.loc
-				R.check_icon()
-			if("wall")
-				R.word1=worddestr
-				R.word2=wordtravel
-				R.word3=wordself
-				R.loc = user.loc
-				R.check_icon()
-			if("freedom")
-				R.word1=wordtravel
-				R.word2=wordtech
-				R.word3=wordother
-				R.loc = user.loc
-				R.check_icon()
-			if("cultsummon")
-				R.word1=wordjoin
-				R.word2=wordother
-				R.word3=wordself
-				R.loc = user.loc
-				R.check_icon()
-			if("silence")
-				R.word1=wordhide
-				R.word2=wordother
-				R.word3=wordsee
-				R.loc = user.loc
-				R.check_icon()
-			if("blind")
-				R.word1=worddestr
-				R.word2=wordsee
-				R.word3=wordother
-				R.loc = user.loc
-				R.check_icon()
-			if("bloodboil")
-				R.word1=worddestr
-				R.word2=wordsee
-				R.word3=wordblood
-				R.loc = user.loc
-				R.check_icon()
-			if("communicate")
-				R.word1=wordself
-				R.word2=wordother
-				R.word3=wordtech
-				R.loc = user.loc
-				R.check_icon()
-			if("shadow")
-				R.word1=wordhide
-				R.word2=wordsee
-				R.word3=wordtech
-				R.loc = user.loc
-				R.check_icon()
-			if("stun")
-				R.word1=wordjoin
-				R.word2=wordhide
-				R.word3=wordtech
-				R.loc = user.loc
-				R.check_icon()
-		*/
