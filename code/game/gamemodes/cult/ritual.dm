@@ -151,18 +151,19 @@ var/engwords = list("travel", "blood", "join", "hell", "destroy", "technology", 
 /obj/effect/rune/attackby(I as obj, user as mob)
 	//*No more rune limit, runes are now permanent
 	if(istype(I, /obj/item/weapon/tome) && iscultist(user))
-		user << "<span class='notice'>You retrace your steps, carefully undoing the lines of the rune.</span>"
-		/*
-		R.blood_DNA = list()
-		R.blood_DNA[H.dna.unique_enzymes] = H.dna.blood_type*/
+		user << "<span class='notice'>You disrup the power of the rune, leavening only the blood.</span>"
+		var/obj/effect/decal/cleanable/blood/B =new(src.loc)
+		B.blood_DNA = src.blood_DNA
 		del(src)
 		return
 	
 	if(istype(I, /obj/item/weapon/nullrod))
 		user << "<span class='notice'>You disrupt the vile magic with the deadening field of the null rod!</span>"
+		var/obj/effect/decal/cleanable/blood/B =new(src)
+		B.blood_DNA = src.blood_DNA
 		del(src)
 		return
-	else if(istype(I, /obj/item/weapon/melee/cultblade) || istype(I, /obj/item/weapon/tome))
+	else if(istype(I, /obj/item/weapon/melee/cultblade))
 		attack_hand(user)
 	return
 

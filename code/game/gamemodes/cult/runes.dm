@@ -229,43 +229,51 @@ var/list/sacrificed = list()
 
 /////////////////////////////////////////SIXTH RUNE
 
-/obj/effect/rune/drain/invoke()
+/obj/effect/rune/drain/invoke(var/mob/living/carbon/target as mob)
 	var/drain = 0
-	for(var/obj/effect/rune/drain/R in global.runes)
-		for(var/mob/living/carbon/D in R.loc)
-			if(D.stat!=2)
-				var/bdrain = rand(1,25)
-				D << "\red You feel weakened."
-				D.take_overall_damage(bdrain, 0)
-				drain += bdrain
-	if(!drain)
-		return fizzle()
-	usr.say ("Yu[pick("'","`")]gular faras desdae. Havas mithum javara. Umathar uf'kal thenar!")
-	usr.visible_message("\red Blood flows from the rune into [usr]!", \
-	"\red The blood starts flowing from the rune and into your frail mortal body. You feel... empowered.", \
-	"\red You hear a liquid flowing.")
 	var/mob/living/user = usr
-	if(user.bhunger)
-		user.bhunger = max(user.bhunger-2*drain,0)
-	if(drain>=50)
-		user.visible_message("\red [user]'s eyes give off eerie red glow!", \
-		"\red ...but it wasn't nearly enough. You crave, crave for more. The hunger consumes you from within.", \
-		"\red You hear a heartbeat.")
-		user.bhunger += drain
-		src = user
-		spawn()
-			while(user.bhunger>0)
-				sleep(50)
-				user.take_overall_damage(3, 0)
-				user.bhunger -= 3
+	if(istype(src,/obj/effect/rune))
+		for(var/obj/effect/rune/drain/R in global.runes)
+			for(var/mob/living/carbon/D in R.loc)
+				if(D.stat!=2)
+					var/bdrain = rand(1,25)
+					D << "\red You feel weakened."
+					D.take_overall_damage(bdrain, 0)
+					drain += bdrain
+		if(!drain)
+			return fizzle()
+		user.say ("Yu[pick("'","`")]gular faras desdae. Havas mithum javara. Umathar uf'kal thenar!")
+		user.visible_message("\red Blood flows from the rune into [user]!", \
+		"\red The blood starts flowing from the rune and into your frail mortal body. You feel... empowered.", \
+		"\red You hear a liquid flowing.")
+		
+		if(user.bhunger)
+			user.bhunger = max(user.bhunger-2*drain,0)
+		if(drain>=50)
+			user.visible_message("\red [user]'s eyes give off eerie red glow!", \
+			"\red ...but it wasn't nearly enough. You crave, crave for more. The hunger consumes you from within.", \
+			"\red You hear a heartbeat.")
+			user.bhunger += drain
+			src = user
+			spawn()
+				while(user.bhunger>0)
+					sleep(50)
+					user.take_overall_damage(3, 0)
+					user.bhunger -= 3
 			return
+	else if(target && istype(target) && target.stat!=2)
+		user.whisper("Yu[pick("'","`")]gular faras desdae. Havas mithum javara. Umathar uf'kal thenar!")
+		drain = rand(10,20)
+		target.take_overall_damage(drain, 0)
+	else 
+		return 0
 	user.heal_organ_damage(drain%5, 0)
 	drain-=drain%5
 	while(drain>0)
 		drain-=5
 		sleep(2)
 		user.heal_organ_damage(5, 0)
-	return
+	return 1
 
 
 
@@ -571,6 +579,12 @@ var/list/sacrificed = list()
 			if(/obj/effect/rune/runestun) //stun
 				T = new(src.loc)
 				T.imbue = "runestun"
+				imbued_from = R
+				break
+			if(/obj/effect/rune/drain) //drain
+				T = new(src.loc)
+				T.imbue = "drain"
+				T.uses = 5
 				imbued_from = R
 				break
 	if (imbued_from)

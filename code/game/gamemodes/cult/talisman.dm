@@ -66,6 +66,17 @@
 				call(/obj/effect/rune/runestun/invoke)(T)
 				user.drop_item(src)
 				del(src)
+			else if(imbue == "drain")
+				add_logs(user,T, "drained", admin=0,object=src,addition=" drain talisman")
+				if(call(/obj/effect/rune/drain/invoke)(T))
+					uses--
+					if(uses <=0)
+						user.drop_item(src)
+						del(src)
+					else
+						usr << "\red Your drain talisman has [uses] uses left."
+				else 
+					..()
 			else
 				..()   ///If its some other talisman, use the generic attack code, is this supposed to work this way?
 		else
@@ -129,10 +140,11 @@
 		dat += "<A href='?src=\ref[src];rune=teleport'>Sas'so c'arta forbici!</A> - Allows you to move to a rune with the same last word.<BR>"
 		dat += "<A href='?src=\ref[src];rune=sumcult'>N'ath reth sh'yro eth d'rekkathnor!</A> - Allows you to summon one of your cult brothers at a cost. (2 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=emp'>Ta'gh fara'qha fel d'amar det!</A> - Allows you to destroy technology in a short range.You can also attack directly. (3 charge)<BR>"
-		dat += "<A href='?src=\ref[src];rune=conceal'>Kla'atu barada nikt'o!</A> - Allows you to conceal the runes you placed on the floor. (3 uses)<BR>"
-		dat += "<A href='?src=\ref[src];rune=reveal'>Nikt'o barada kla'atu!</A> - Allows you to reveal the runes in a short range. (3 uses)<BR>"
+		dat += "<A href='?src=\ref[src];rune=conceal'>Kla'atu barada nikt'o!</A> - Allows you to conceal the runes you placed on the floor. (2 uses)<BR>"
+		dat += "<A href='?src=\ref[src];rune=reveal'>Nikt'o barada kla'atu!</A> - Allows you to reveal the runes in a short range. (2 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=communicate'>O bidai nabora se'sma!</A> - Allows you to coordinate with others of your cult. (4 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=runestun'>Fuu ma'jin</A> - Allows you to stun a person by attacking them with the talisman.<BR>"
+		dat += "<A href='?src=\ref[src];rune=drain'>Yu'gular faras desdae</A> - Allows you to drain a person of life and healing your own.(5 uses)<BR>"
 		dat += "<A href='?src=\ref[src];rune=armor'>Sa tatha najin</A> - Allows you to summon armoured robes and an unholy blade<BR>"
 		dat += "<A href='?src=\ref[src];rune=construct'>Da A'ig Osk</A> - Summons a construct shell for use with captured souls. It is too large to carry on your person.<BR>"
 		usr << browse(dat, "window=id_com;size=350x200")
@@ -169,12 +181,12 @@
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "conceal"
-					T.uses = 3
+					T.uses = 2
 				if("reveal")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "revealrunes"
-					T.uses = 3
+					T.uses = 2
 				if("communicate")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
@@ -184,6 +196,11 @@
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)
 					T.imbue = "runestun"
+				if("drain")
+					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
+					usr.put_in_hands(T)
+					T.imbue = "drain"
+					T.uses = 5
 				if("armor")
 					var/obj/item/weapon/paper/talisman/T = new /obj/item/weapon/paper/talisman(usr)
 					usr.put_in_hands(T)

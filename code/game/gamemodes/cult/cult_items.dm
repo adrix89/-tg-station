@@ -84,15 +84,20 @@
 			if(spec_attack(user,3))
 				W.dismantle_wall(0,1)
 			return 1
-			
 		else if(istype(target,/obj/machinery/door/airlock))
 			var/obj/machinery/door/airlock/D = target
 			if(!D.glass && !(D.doortype in list(9,26,28,29,30,33)))		//only destroy metal doors,and no vault/AI
 				if(spec_attack(user,4))
 					del D
 				return 1
-		else if(target.type in typesof(/obj/machinery/door/poddoor/shutters,/obj/machinery/portable_atmospherics/canister,/obj/structure/rack,/obj/structure/table,/obj/structure/girder,/obj/structure/grille,/obj/structure/closet))
-			target.ex_act(2)
+		else if(istype(target,/obj/structure/closet))
+			if(spec_attack(user,3))
+				for(var/atom/movable/A as mob|obj in target)
+					A.loc = target.loc
+				del target
+			capture = 1
+		else if(target.type in typesof(/obj/machinery/door/poddoor/shutters,/obj/machinery/portable_atmospherics/canister,/obj/structure/rack,/obj/structure/table,/obj/structure/girder,/obj/structure/grille))
+			del target
 			capture = 1
 			
 		if(capture)
@@ -113,7 +118,7 @@
 	active += 1
 	var/this_active = active
 	var/location = user.loc
-	var/spec_verbs = list("Hora! Hora! Hora!","KaPOW!","Chop! Chop!","WATchaoa","Jack Jack Jack...","saMurai Jack")
+	var/spec_verbs = list("Hora! Hora! Hora!","KaPOW!","Chop! Chop!","WATchaoa","jack jack jack...","saMurai Jack")
 	for(var/i=0,i<cycle,i++)
 		playsound(loc, 'sound/weapons/bladeslice.ogg', 50, 1, -1)
 		user.visible_message("\red \b [pick(spec_verbs)]")

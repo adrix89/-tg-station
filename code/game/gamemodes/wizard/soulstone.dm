@@ -70,6 +70,7 @@
 					A.canmove = 1
 					A << "<b>You have been released from your prison, but you are still bound to [U.name]'s will. Help them suceed in their goals at all costs.</b>"
 					A.loc = U.loc
+					A.force_whisper = 0
 					A.cancel_camera()
 					src.icon_state = "soulstone"
 		attack_self(U)
@@ -185,6 +186,7 @@
 						T.loc = C //put shade in stone
 						T.status_flags |= GODMODE
 						T.canmove = 0
+						T.force_whisper = 1
 						T.health = T.maxHealth
 						C.icon_state = "soulstone2"
 						T << "Your soul has been recaptured by the soul stone, its arcane energies are reknitting your ethereal form"

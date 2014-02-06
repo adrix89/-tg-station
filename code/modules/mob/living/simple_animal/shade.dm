@@ -22,6 +22,7 @@
 	max_co2 = 0
 	max_tox = 0
 	speed = 0
+	var/force_whisper = 1 
 	//luminosity = 2
 	see_in_dark = 4
 	//sight = SEE_TURFS
@@ -30,6 +31,12 @@
 	status_flags = 0
 	faction = "cult"
 	status_flags = CANPUSH
+	
+/mob/living/simple_animal/shade/say(var/message, var/bubble_type)
+	if(force_whisper)
+		whisper(message)
+	else
+		..()
 	
 /mob/living/simple_animal/shade/Process_Spacemove(var/check_drift = 0)
 	return 1	//No drifting in space for space carp!	//original comments do not steal	//stolen
