@@ -263,7 +263,7 @@ var/list/sacrificed = list()
 			return
 	else if(target && istype(target) && target.stat!=2)
 		user.whisper("Yu[pick("'","`")]gular faras desdae. Havas mithum javara. Umathar uf'kal thenar!")
-		drain = rand(10,20)
+		drain = rand(7,20)
 		target.take_overall_damage(drain, 0)
 	else 
 		return 0

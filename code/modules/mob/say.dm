@@ -1,9 +1,27 @@
 /mob/proc/say()
 	return
 
-/mob/verb/whisper()
+/mob/proc/whisper()
+	return
+
+/mob/verb/whisper_verb(message as text)
 	set name = "Whisper"
 	set category = "IC"
+	if(say_disabled)	//This is here to try to identify lag problems
+		usr << "\red Speech is currently admin-disabled."
+		return
+		
+	message = trim(copytext(strip_html_simple(message), 1, MAX_MESSAGE_LEN))
+
+	if (src.client)
+		if (src.client.prefs.muted & MUTE_IC)
+			src << "\red You cannot whisper (muted)."
+			return
+
+		if (src.client.handle_spam_prevention(message,MUTE_IC))
+			return
+			
+	usr.whisper(message)
 	return
 
 /mob/verb/say_verb(message as text)

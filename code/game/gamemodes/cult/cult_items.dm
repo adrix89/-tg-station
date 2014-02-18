@@ -45,7 +45,7 @@
 	
 /obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, proximity_flag, click_parameters)
 	if(proximity_flag)
-		var/name = target.name
+		//var/name = target.name
 		var/capture = 0
 		if(istype(target,/obj/mecha))
 			var/obj/mecha/mech = target
@@ -102,7 +102,7 @@
 			capture = 1
 			
 		if(capture)
-			user.visible_message("[name] sings \red \b [pick(spec_verbs)]")
+			user.visible_message("\i \red \b [pick(spec_verbs)]")
 			playsound(loc, hitsound, 50, 1, -1)
 			return 1
 		else
@@ -115,7 +115,7 @@
 	var/location = user.loc
 	for(var/i=0,i<cycle,i++)
 		playsound(loc, hitsound, 50, 1, -1)
-		user.visible_message("[name] sings \red \b [pick(spec_verbs)]")
+		user.visible_message("\i \red \b [pick(spec_verbs)]")
 		sleep(12)
 		if(location != user.loc || active!=this_active)
 			return 0
@@ -139,7 +139,7 @@
 	
 /obj/item/weapon/melee/cultblade/vorpal/attack(mob/living/target as mob, mob/living/carbon/human/user as mob)
 	if(iscultist(user))
-		if(!target.stat)	//if he is not half dead already
+		if(target.stat != DEAD)	//if he is not dead already
 			if(strikes >= 3)
 				strikes = 0
 				charges++
@@ -147,8 +147,7 @@
 				user.visible_message("<span class='telepath'> \i [msg]</span>")
 			else
 				strikes++
-		return ..()
-	return
+	return ..()
 	
 /obj/item/weapon/melee/cultblade/vorpal/attack_self(mob/user as mob)
 	if(iscultist(user) && isturf(user.loc) && charges >= 1)
@@ -158,7 +157,7 @@
 		var/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/jump = new /obj/effect/proc_holder/spell/targeted/ethereal_jaunt
 		jump.choose_targets()
 	else
-		user << "\red \i Silence..."
+		user << "\blue \i Silence..."
 		
 /obj/item/weapon/gun/magic/wand/reincarnate
 	name = "wand of reincarnate"

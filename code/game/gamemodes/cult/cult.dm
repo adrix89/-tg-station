@@ -247,6 +247,7 @@
 	if (!istype(cult_mind))
 		return 0
 	if(type == 1 && !(cult_mind in cult) && is_convertable_to_cult(cult_mind))
+		support -= cult_mind
 		cult += cult_mind
 		learn_words(cult_mind.current,1)
 		update_cult_icons_added(cult_mind)
