@@ -365,3 +365,9 @@ var/list/blood_splatter_icons = list()
 		return 1
 	else
 		return 0
+
+/atom/proc/handle_fall()
+	return
+
+/atom/proc/handle_slip()
+	return

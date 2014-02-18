@@ -1071,7 +1071,6 @@
 			if(glasses)
 				if(istype(glasses, /obj/item/clothing/glasses/meson))
 					sight |= SEE_TURFS
-					see_invisible = SEE_INVISIBLE_MINIMUM
 				else if(istype(glasses, /obj/item/clothing/glasses/night))
 					see_in_dark = 5
 					see_invisible = SEE_INVISIBLE_MINIMUM
@@ -1098,10 +1097,10 @@
 					see_invisible = SEE_INVISIBLE_LIVING
 				else
 					see_invisible = SEE_INVISIBLE_LIVING
-					
+
 			if(druggy)	//Override for druggy
 				see_invisible = see_temp
-				
+
 			if(see_override)	//Override all
 				see_invisible = see_override
 
