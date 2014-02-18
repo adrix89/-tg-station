@@ -30,7 +30,7 @@
 
 /obj/item/weapon/melee/ironslayer
 	name = "Jack's katana"
-	desc = "The blade of a samurai from the past, he was plunged into the future by a great evil and was on a quest to return back to the past. Nar-Sie manged to get ahold of his blade... Goes through metal like butter."
+	desc = "The blade of a samurai, he was plunged into the future by a great evil and was on a quest to return back to the past. Nar-Sie managed to get ahold of his blade... Goes through metal like butter."
 	icon_state = "katana"
 	item_state = "katana"
 	flags = CONDUCT | USEDELAY
@@ -40,6 +40,7 @@
 	w_class = 4
 	var/active = 0
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	var/spec_verbs = list("ILbeBack!","BaktoPast!","Wa WAchaoa!","WAchaoa.","jack jack jack...","sa Murai Jack.")
 	attack_verb = list("slashed", "sliced", "torn", "ripped", "diced", "cut")
 	
 /obj/item/weapon/melee/ironslayer/preattack(atom/target, mob/user, proximity_flag, click_parameters)
@@ -101,14 +102,8 @@
 			capture = 1
 			
 		if(capture)
-			var/showname
-			if(user)
-				showname = " by [user]"
-			if(attack_verb.len)
-				user.visible_message("\red <B>[name] has been [pick(attack_verb)] with [src][showname]. </B>")
-			else
-				user.visible_message("\red <B>[name] has been attacked with [src][showname]. </B>")
-			playsound(loc, 'sound/weapons/bladeslice.ogg', 50, 1, -1)
+			user.visible_message("[name] sings \red \b [pick(spec_verbs)]")
+			playsound(loc, hitsound, 50, 1, -1)
 			return 1
 		else
 			return 0
@@ -118,10 +113,9 @@
 	active += 1
 	var/this_active = active
 	var/location = user.loc
-	var/spec_verbs = list("Hora! Hora! Hora!","KaPOW!","Chop! Chop!","WATchaoa","jack jack jack...","saMurai Jack")
 	for(var/i=0,i<cycle,i++)
-		playsound(loc, 'sound/weapons/bladeslice.ogg', 50, 1, -1)
-		user.visible_message("\red \b [pick(spec_verbs)]")
+		playsound(loc, hitsound, 50, 1, -1)
+		user.visible_message("[name] sings \red \b [pick(spec_verbs)]")
 		sleep(12)
 		if(location != user.loc || active!=this_active)
 			return 0
