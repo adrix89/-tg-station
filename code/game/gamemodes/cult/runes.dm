@@ -989,7 +989,7 @@ var/list/sacrificed = list()
 			cultist.legcuffed = null
 			cultist.update_inv_legcuffed(0)
 		if (istype(cultist.wear_mask, /obj/item/clothing/mask/muzzle))
-			cultist.u_equip(cultist.wear_mask)
+			cultist.unEquip(cultist.wear_mask)
 		if(istype(cultist.loc, /obj/structure/closet)&&cultist.loc:welded)
 			cultist.loc:welded = 0
 		if(istype(cultist.loc, /obj/structure/closet/secure_closet)&&cultist.loc:locked)
@@ -1286,19 +1286,19 @@ var/list/sacrificed = list()
 	var/obj/item/slot_item = user.get_item_by_slot(slot_wear_suit)
 	if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/suit/cult,/obj/item/clothing/suit/space/cult)))
 		if(slot_item.type in typesof(/obj/item/clothing/suit/armor/hos,/obj/item/clothing/suit/armor/vest/capcarapace,/obj/item/clothing/suit/armor/swat,/obj/item/clothing/suit/armor/laserproof))
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			del slot_item
 			user.equip_to_slot_or_del(new /obj/item/clothing/suit/cult/magusred,slot_wear_suit)
 		else if(slot_item.type in typesof(/obj/item/clothing/suit/space/rig,/obj/item/clothing/suit/space/captain))
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			del slot_item
 			user.equip_to_slot_or_del(new /obj/item/clothing/suit/space/cult/construct,slot_wear_suit)
 		else if(slot_item.flags & THICKMATERIAL)	//bio,bomb,fire suit, covers all body, flag was intialy used for ling sting
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			del slot_item
 			user.equip_to_slot_or_del(new /obj/item/clothing/suit/space/cult,slot_wear_suit)
 		else
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			user.equip_to_slot_if_possible(new /obj/item/clothing/suit/cult/alt(get_turf(user)), slot_wear_suit,0,1,1)
 	else
 		user.equip_to_slot_if_possible(new /obj/item/clothing/suit/cult/alt(get_turf(user)), slot_wear_suit,0,1,1)
@@ -1306,30 +1306,30 @@ var/list/sacrificed = list()
 	slot_item = user.get_item_by_slot(slot_head)
 	if(slot_item && !(slot_item.type in typesof(/obj/item/clothing/head/cult,/obj/item/clothing/head/helmet/space/cult)))
 		if(slot_item.type in typesof(/obj/item/clothing/head/helmet/space/rig,/obj/item/clothing/head/helmet/space/capspace))
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			del slot_item
 			user.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/space/cult/construct,slot_head)
 		else if(istype(slot_item,/obj/item/clothing/head/welding) || slot_item.flags & THICKMATERIAL)
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			del slot_item
 			user.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/space/cult,slot_head)
 		else if(istype(slot_item,/obj/item/clothing/head/helmet))
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			del slot_item
 			user.equip_to_slot_or_del(new /obj/item/clothing/head/cult/magus,slot_head)
 		else
-			user.u_equip(slot_item)
+			user.unEquip(slot_item)
 			user.equip_to_slot_if_possible(new /obj/item/clothing/head/cult/alt(get_turf(user)), slot_head,0,1,1)
 	else
 		user.equip_to_slot_if_possible(new /obj/item/clothing/head/cult/alt(get_turf(user)), slot_head,0,1,1)
 		
 	slot_item = user.get_item_by_slot(slot_shoes)
 	if(slot_item && !istype(slot_item,/obj/item/clothing/shoes/magboots) && slot_item.flags&NOSLIP)
-		user.u_equip(slot_item)
+		user.unEquip(slot_item)
 		del slot_item
 		user.equip_to_slot_or_del(new /obj/item/clothing/shoes/cult/galoshes,slot_shoes)
 	else
-		user.u_equip(slot_item)
+		user.unEquip(slot_item)
 		user.equip_to_slot_if_possible(new /obj/item/clothing/shoes/cult(get_turf(user)), slot_shoes,0,1,1)
 		
 	user.equip_to_slot_if_possible(new /obj/item/weapon/storage/backpack/cultpack(get_turf(user)), slot_back)
