@@ -36,9 +36,9 @@
 	reqs = list(/obj/item/weapon/handcuffs/cable = 1,
 				/obj/item/stack/rods = 1,
 				/obj/item/weapon/wirecutters = 1,
-				/obj/item/weapon/cell = 1)
+				/obj/item/weapon/stock_parts/cell = 1)
 	time = 80
-	parts = list(/obj/item/weapon/cell = 1)
+	parts = list(/obj/item/weapon/stock_parts/cell = 1)
 
 /datum/table_recipe/ed209
 	name = "ED209"
@@ -51,7 +51,7 @@
 				/obj/item/stack/sheet/metal = 5,
 				/obj/item/stack/cable_coil = 5,
 				/obj/item/weapon/gun/energy/taser = 1,
-				/obj/item/weapon/cell = 1,
+				/obj/item/weapon/stock_parts/cell = 1,
 				/obj/item/device/assembly/prox_sensor = 1,
 				/obj/item/robot_parts/r_arm = 1)
 	tools = list(/obj/item/weapon/weldingtool, /obj/item/weapon/screwdriver)
@@ -538,20 +538,21 @@
 
 
 /obj/structure/table/attackby(obj/item/I, mob/user)
-	if (istype(I, /obj/item/weapon/grab) && get_dist(src, user) < 2)
-		var/obj/item/weapon/grab/G = I
-		if(G.affecting.buckled)
-			user << "<span class='notice'>[G.affecting] is buckled to [G.affecting.buckled]!</span>"
-			return
-		if(G.state < GRAB_AGGRESSIVE)
-			user << "<span class='notice'>You need a better grip to do that!</span>"
-			return
-		if(!G.confirm())
-			return
-		G.affecting.loc = src.loc
-		G.affecting.Weaken(5)
-		G.affecting.visible_message("<span class='danger'>[G.assailant] pushes [G.affecting] onto [src].</span>", \
-									"<span class='userdanger'>[G.assailant] pushes [G.affecting] onto [src].</span>")
+	if (istype(I, /obj/item/weapon/grab))
+		if(get_dist(src, user) < 2)
+			var/obj/item/weapon/grab/G = I
+			if(G.affecting.buckled)
+				user << "<span class='notice'>[G.affecting] is buckled to [G.affecting.buckled]!</span>"
+				return
+			if(G.state < GRAB_AGGRESSIVE)
+				user << "<span class='notice'>You need a better grip to do that!</span>"
+				return
+			if(!G.confirm())
+				return
+			G.affecting.loc = src.loc
+			G.affecting.Weaken(5)
+			G.affecting.visible_message("<span class='danger'>[G.assailant] pushes [G.affecting] onto [src].</span>", \
+										"<span class='userdanger'>[G.assailant] pushes [G.affecting] onto [src].</span>")
 		del(I)
 		return
 
