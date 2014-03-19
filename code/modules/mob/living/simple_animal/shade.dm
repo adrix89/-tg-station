@@ -22,7 +22,6 @@
 	max_co2 = 0
 	max_tox = 0
 	speed = 0
-	var/force_whisper = 1 
 	//luminosity = 2
 	see_in_dark = 4
 	//sight = SEE_TURFS
@@ -32,9 +31,11 @@
 	faction = "cult"
 	status_flags = CANPUSH
 	
+	
 /mob/living/simple_animal/shade/say(var/message, var/bubble_type)
-	if(force_whisper)
-		whisper(message)
+	if(!isturf(loc))
+		for(var/mob/living/carbon/C in get_turf(src))
+			C.show_message( message, 1, message, 2)
 	else
 		..()
 	
