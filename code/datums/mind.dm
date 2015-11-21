@@ -1439,6 +1439,7 @@
 			current.memory += "<B>Objective #1</B>: [explanation]<BR>"
 			current << "The convert rune is join blood self"
 			current.memory += "The convert rune is join blood self<BR>"
+			cult.learn_words(current,1)
 
 	var/mob/living/carbon/human/H = current
 	if (istype(H))

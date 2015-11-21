@@ -2,8 +2,10 @@
 
 /datum/game_mode
 	var/list/datum/mind/cult = list()
-	var/list/allwords = list("travel","self","see","hell","blood","join","tech","destroy", "other", "hide")
-	var/list/grantwords = list("travel", "see", "hell", "tech", "destroy", "other", "hide")
+	var/list/datum/mind/support = list()	//not counted as cultist but still part of cult
+	var/list/allwords = list("travel","self","see","hell","blood","join","technology","destroy", "other", "hide")
+	var/list/grantwords =list("travel","self","see","technology","destroy", "other", "hide")
+	var/list/globalwords = list("hell","blood","join")
 	var/list/cult_objectives = list()
 
 
@@ -56,8 +58,8 @@
 	antag_flag = ROLE_CULTIST
 	restricted_jobs = list("Chaplain","AI", "Cyborg", "Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Head of Personnel")
 	protected_jobs = list()
-	required_players = 20
-	required_enemies = 4
+	required_players = 1
+	required_enemies = 0
 	recommended_enemies = 4
 	enemy_minimum_age = 14
 
@@ -76,6 +78,7 @@
 
 /datum/game_mode/cult/announce()
 	world << "<B>The current game mode is - Cult!</B>"
+	world << "<B>Some crewmembers are attempting to start a cult!<BR>\nCultists - complete your objectives. Sacrifice crewmembers to please your god and convert those who are worthy to your cause. Remember - there is no you, there is only the cult.<BR>\nPersonnel - Do not let the cult succeed in its mission.</B>"
 	world << "<B>Some crewmembers are attempting to start a cult!<BR>\nCultists - complete your objectives. Convert crewmembers to your cause by using the convert rune. Remember - there is no you, there is only the cult.<BR>\nPersonnel - Do not let the cult succeed in its mission. Brainwashing them with the chaplain's bible reverts them to whatever Centcom-allowed faith they had.</B>"
 
 
@@ -152,10 +155,10 @@
 				explanation = "Summon Nar-Sie via the use of the appropriate rune (Hell join self). It will only work if nine cultists stand on and around it."
 		cult_mind.current << "<B>Objective #[obj_count]</B>: [explanation]"
 		cult_mind.memory += "<B>Objective #[obj_count]</B>: [explanation]<BR>"
-	cult_mind.current << "The Geometer of Blood grants you the knowledge to sacrifice non-believers. (Hell Blood Join)"
-	cult_mind.memory += "The Geometer of Blood grants you the knowledge to sacrifice non-believers. (Hell Blood Join)<BR>"
-	for(var/startingword in startwords)
-		grant_runeword(cult_mind.current,startingword)
+	cult_mind.current << "The Geometer of Blood grants knowledge for blood, sacrifice to get more knowledge. (Hell Blood Join)"
+	cult_mind.memory += "The Geometer of Blood grants knowledge for blood, sacrifice to get more knowledge. (Hell Blood Join)<BR>"
+	learn_words(cult_mind.current)
+	cult_mind.current << note
 //	grant_runeword(cult_mind.current,"blood")
 //	grant_runeword(cult_mind.current,"hell")
 
@@ -223,7 +226,7 @@
 			wordexp = "[wordself] is self..."
 		if("see")
 			wordexp = "[wordsee] is see..."
-		if("tech")
+		if("technology")
 			wordexp = "[wordtech] is technology..."
 		if("destroy")
 			wordexp = "[worddestr] is destroy..."
@@ -235,11 +238,26 @@
 //			wordexp = "[wordfree] is free..."
 		if("hide")
 			wordexp = "[wordhide] is hide..."
-	cult_mob << "<span class='danger'>[pick("You remember something from the dark teachings of your master","You hear a dark voice on the wind","Black blood oozes into your vision and forms into symbols","You catch a brief glimmer of the otherside")]... [wordexp]</span>"
+	if(!(word in globalwords))
+		globalwords += word
+	if(trans)
+		cult_mob << "<span class='telepath'> \i Knowledge seeps into your mind... [wordexp]</span>"
+	else
+		cult_mob << "<span class='telepath'> \i [pick("You remember something from the dark teachings of your master","You hear a dark voice on the wind","Black blood oozes into your vision and forms into symbols","You catch a brief glimmer of the otherside")]... [wordexp]</span>"
+	if(word in cult_mob.mind.cult_words)		//don't store repeats in memory
+		return
 	cult_mob.mind.store_memory("<B>You remember that</B> [wordexp]", 0, 0)
 	cult_mob.mind.cult_words += word
 	if(cult_mob.mind.cult_words.len == allwords.len)
 		cult_mob << "\green You feel enlightened, as if you have gained all the secrets of the other side."
+	
+				
+/datum/game_mode/proc/learn_words(mob/living/carbon/human/cultist,var/trans = 0)
+	if(!istype(cultist))
+		return
+	var/list/words = globalwords - cultist.mind.cult_words
+	for(var/word in words)
+		grant_runeword(cultist,word,trans)
 
 
 /datum/game_mode/proc/add_cultist(datum/mind/cult_mind) //BASE
@@ -248,6 +266,7 @@
 	if(!(cult_mind in cult) && is_convertable_to_cult(cult_mind))
 		cult_mind.current.Paralyse(5)
 		cult += cult_mind
+		learn_words(cult_mind.current,1)
 		cult_mind.current.cult_add_comm()
 		update_cult_icons_added(cult_mind)
 		cult_mind.current.attack_log += "\[[time_stamp()]\] <span class='danger'>Has been converted to the cult!</span>"

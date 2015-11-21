@@ -3,6 +3,7 @@ var/global/list/portals = list()					//list of all /obj/effect/portal
 var/global/list/airlocks = list()					//list of all airlocks
 var/global/list/mechas_list = list()				//list of all mechs. Used by hostile mobs target tracking.
 var/global/list/shuttle_caller_list = list()  		//list of all communication consoles and AIs, for automatic shuttle calls when there are none.
+var/global/list/runes = list()		//All cult runes in world
 var/global/list/machines = list()					//NOTE: this is a list of ALL machines now. The processing machines list is SSmachine.processing !
 var/global/list/navbeacons = list()					//list of all bot nagivation beacons, used for patrolling.
 var/global/list/deliverybeacons = list()			//list of all MULEbot delivery beacons.
